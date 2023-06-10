@@ -11,8 +11,14 @@ class Transaction extends Model
     use HasFactory;
 
     protected $guarded = [];
-    public function user(): BelongsTo
+
+    public function accountTo(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Account::class, 'account_to_id');
+    }
+
+    public function accountFrom(): BelongsTo
+    {
+        return $this->belongsTo(Account::class, 'account_from_id');
     }
 }

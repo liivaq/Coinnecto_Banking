@@ -58,20 +58,20 @@
                             </tr>
                             </thead>
                             <tbody class="bg-white">
-                            @foreach($transactions as $transaction)
+                            @foreach($transactionsOut as $transaction)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                                         <div class="flex items-center">
                                             <div>
-                                                <div class="text-sm leading-5 text-gray-800">#{{$transaction->id}}</div>
+                                                <div class="text-sm leading-5 text-gray-800">#</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
-                                        <div class="text-sm leading-5 text-blue-900">{{$transaction->account_from}}</div>
+                                        <div class="text-sm leading-5 text-blue-900">{{$transaction->account_from_id}}</div>
                                     </td>
                                     <td class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
-                                        {{$transaction->account_to}}
+                                        {{$transaction->account_to_id}}
                                     </td>
                                     <td class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
                                         {{number_format($transaction->amount, 2)}}

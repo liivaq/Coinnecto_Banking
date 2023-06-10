@@ -11,9 +11,9 @@ class TransactionController extends Controller
 {
     public function index(){
         $user = User::find(auth()->user()->getAuthIdentifier());
-        $transactions = $user->transactions()->get();
+
         return view('transactions.index', [
-            'transactions' => $transactions
+            'transactions' => $transactions,
         ]);
     }
 
@@ -55,14 +55,13 @@ class TransactionController extends Controller
     private function saveTransaction(Account $from, Account $to, $amount)
     {
         $transaction = (new Transaction())->fill([
-            'account_from' => $from->number,
-            'account_to' => $to->number,
+            'account_from_id' => $from->id,
+            'account_to_id' => $to->id,
             'currency_from' => $from->currency,
             'currency_to' => $to->currency,
-            'amount' => $amount
+            'amount' => $amount,
         ]);
 
-        $transaction->user()->associate(auth()->user());
         $transaction->save();
     }
 

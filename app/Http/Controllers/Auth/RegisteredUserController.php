@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Account;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -40,6 +41,13 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'codes' => $this->generateSecurityCodes()
+        ]);
+
+        $user->accounts()->create([
+            'name' => 'Main',
+            'currency' => 'EUR',
+            'number' => $this->generateAccountNumber()
         ]);
 
         event(new Registered($user));
@@ -47,5 +55,27 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         return redirect(RouteServiceProvider::HOME);
+    }
+
+    private function generateAccountNumber(string $currency = 'EUR', int $length = 21): string
+    {
+        do {
+            $account = strtoupper($currency) . rand(0, 9) . rand(0, 9) . 'ECTO';
+            for ($i = 0; strlen($account) < $length; $i++) {
+                $account .= rand(0, 9);
+            }
+        } while (Account::where('number', $account)->exists());
+
+        return $account;
+    }
+
+    private function generateSecurityCodes(int $amount = 15, int $codeLength = 4): string
+    {
+        $codes = [];
+        for ($i = 0; $i < $amount; $i++) {
+            $codes[] = str_pad(random_int(0, 999999), $codeLength, 0, STR_PAD_LEFT);;
+        }
+
+        return json_encode($codes);
     }
 }
