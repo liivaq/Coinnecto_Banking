@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
-    Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transactions.transfer');
+    Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transfer');
 });
 
 require __DIR__.'/auth.php';

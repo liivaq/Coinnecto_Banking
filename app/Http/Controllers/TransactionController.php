@@ -10,9 +10,16 @@ use Illuminate\Http\Request;
 class TransactionController extends Controller
 {
     public function index(){
-        $user = User::find(auth()->user()->getAuthIdentifier());
 
-        return view('transactions.index', [
+        $accounts = auth()->user()->accounts()->get();
+
+        $transactions = Transaction::with(['accountTo', 'accountFrom'])
+            ->whereIn('account_from_id', $accounts->pluck('id'))
+            ->orWhereIn('account_to_id', $accounts->pluck('id'))->get();
+
+
+        return view('transactions.index',[
+            'accounts' => $accounts,
             'transactions' => $transactions,
         ]);
     }
@@ -40,11 +47,8 @@ class TransactionController extends Controller
             $this->convert($accountFrom->currency, $accountTo->currency, $request->amount);
         }*/
 
-        $accountFrom->balance -= $request->amount;
-        $accountTo->balance += $request->amount;
-
-        $accountTo->save();
-        $accountFrom->save();
+        $accountFrom->withdraw($request->amount);
+        $accountTo->deposit($request->amount);
 
         $this->saveTransaction($accountFrom, $accountTo, $request->amount);
 
