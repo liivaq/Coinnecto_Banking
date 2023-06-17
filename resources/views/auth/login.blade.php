@@ -107,8 +107,8 @@
                         <path d="M11 10h2a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1z"></path>
                         <path d="M11 17h2a1 1 0 0 1 1 1v2a1 1 0 0 1 -1 1h-2a1 1 0 0 1 -1 -1v-2a1 1 0 0 1 1 -1z"></path>
                     </svg>
-                    <label for="code"></label>
-                    <input class="pl-2 outline-none border-none" type="password" name="code" id="code"
+                    <label for="one_time_password"></label>
+                    <input class="pl-2 outline-none border-none" type="password" name="one_time_password" id="one_time_password"
                            placeholder="Security code"/>
                 </div>
                 <button type="submit"

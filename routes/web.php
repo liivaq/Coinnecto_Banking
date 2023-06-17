@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('index');
-});
+})->middleware('guest');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -37,9 +37,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions');
+    Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transactions');
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
-    Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transfer');
 });
 
 require __DIR__.'/auth.php';

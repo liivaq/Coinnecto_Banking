@@ -2,23 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TransferRequest;
 use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Repositories\CurrencyRepository;
+use App\Rules\Otp;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 
 class TransactionController extends Controller
 {
-    public function index(){
+    private CurrencyRepository $currencyRepository;
 
+    public function __construct(CurrencyRepository $currencyRepository)
+    {
+        $this->currencyRepository = $currencyRepository;
+    }
+
+
+    public function index()
+    {
         $accounts = auth()->user()->accounts()->get();
 
         $transactions = Transaction::with(['accountTo', 'accountFrom'])
             ->whereIn('account_from_id', $accounts->pluck('id'))
             ->orWhereIn('account_to_id', $accounts->pluck('id'))->get();
 
-
-        return view('transactions.index',[
+        return view('transactions.index', [
             'accounts' => $accounts,
             'transactions' => $transactions,
         ]);
@@ -33,20 +46,14 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function transfer(Request $request)
+    public function transfer(TransferRequest $request): Redirector|Application|RedirectResponse
     {
         $accountFrom = Account::where('number', $request->account_from)->firstOrFail();
         $accountTo = Account::where('number', $request->account_to)->firstOrFail();
 
-        $request->validate([
-            'account_to' => ['required', 'exists:accounts,number'],
-            'amount' => ['required', 'numeric', 'min:1', 'max:'.$accountFrom->balance]
-        ]);
+        $request->validated();
 
-       /* if($accountFrom->currency !== $accountTo->currency){
-            $this->convert($accountFrom->currency, $accountTo->currency, $request->amount);
-        }*/
-
+        //$convertedAmount = $this->convert($accountFrom->currency, $accountTo->currency, $request->amount);
         $accountFrom->withdraw($request->amount);
         $accountTo->deposit($request->amount);
 
@@ -69,9 +76,20 @@ class TransactionController extends Controller
         $transaction->save();
     }
 
-    private function convert(int $from, int $to, int $amount)
-    {
+    /* private function convert(string $from, string $to, int $amount): int
+     {
+         $currencies = $this->currencyRepository->all()->values();
 
-    }
+
+         $fromCurrency = $currencies->where('id', $from)->first();
+         dd($currencies->where('id', 'EUR'));
+         $senderCurrencyRate = $senderCurrency->rate;
+
+         $recipientCurrency = $currencies->where('symbol', $recipientAccount->currency)->first();
+         $recipientCurrencyRate = $recipientCurrency->rate;
+
+         $exchangeRate = $recipientCurrencyRate / $senderCurrencyRate;
+
+     }*/
 
 }

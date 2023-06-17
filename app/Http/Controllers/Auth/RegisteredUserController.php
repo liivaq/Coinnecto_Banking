@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use PragmaRX\Google2FA\Google2FA;
 
 class RegisteredUserController extends Controller
 {
@@ -41,7 +42,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'codes' => $this->generateSecurityCodes()
+            'google2fa_secret' => (new Google2FA)->generateSecretKey()
         ]);
 
         $user->accounts()->create([

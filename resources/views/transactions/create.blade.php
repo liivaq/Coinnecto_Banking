@@ -7,9 +7,9 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
-                    <form method="POST" action="/transactions" class="bg-white">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mx-auto">
+                <div class="flex py-10 bg-white">
+                    <form method="POST" action="{{ route('transactions') }}" class="bg-white ml-10">
                         @csrf
                         <h1 class="text-gray-800 font-bold text-4xl mb-4">Set up the transaction</h1>
                         <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4 text-xl">
@@ -37,7 +37,18 @@
                             <input class="px-5 outline-none border-none " type="number" step="0.01" name="amount" id="amount"
                                    placeholder="Transferable amount"/>
                         </div>
+
                         @error('amount')
+                        <p class="text-red-500 text-xs">{{ $message }}</p>
+                        @enderror
+
+                        <div class="flex items-center border-2 py-2 px-3 rounded-2xl text-xl mt-4">
+                            <label for="one_time_password">Enter Code:</label>
+                            <input class="px-5 outline-none border-none " type="text" name="one_time_password" id="one_time_password"
+                                   placeholder="Authenticate"/>
+                        </div>
+
+                        @error('one_time_password')
                         <p class="text-red-500 text-xs">{{ $message }}</p>
                         @enderror
                         <button type="submit"
