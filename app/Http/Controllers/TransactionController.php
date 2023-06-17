@@ -7,10 +7,8 @@ use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Repositories\CurrencyRepository;
-use App\Rules\Otp;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 
 class TransactionController extends Controller
@@ -53,17 +51,33 @@ class TransactionController extends Controller
 
         $request->validated();
 
-        //$convertedAmount = $this->convert($accountFrom->currency, $accountTo->currency, $request->amount);
-        $accountFrom->withdraw($request->amount);
-        $accountTo->deposit($request->amount);
+        $converted = $this->convert($accountFrom->currency, $accountTo->currency, $request->amount);
 
-        $this->saveTransaction($accountFrom, $accountTo, $request->amount);
+        $convertedAmount = $converted['convertedAmount'];
+        $exchangeRate = $converted['exchangeRate'];
+
+        $accountFrom->withdraw($request->amount);
+        $accountTo->deposit($convertedAmount);
+
+        $this->saveTransaction(
+            $accountFrom,
+            $accountTo,
+            $request->amount,
+            $convertedAmount,
+            $exchangeRate
+        );
 
         return redirect('/transactions');
 
     }
 
-    private function saveTransaction(Account $from, Account $to, $amount)
+    private function saveTransaction(
+        Account $from,
+        Account $to,
+        float $amount,
+        float $amountConverted,
+        float $exchangeRate
+    ):void
     {
         $transaction = (new Transaction())->fill([
             'account_from_id' => $from->id,
@@ -71,25 +85,28 @@ class TransactionController extends Controller
             'currency_from' => $from->currency,
             'currency_to' => $to->currency,
             'amount' => $amount,
+            'amount_converted' => $amountConverted,
+            'exchange_rate' => $exchangeRate
         ]);
 
         $transaction->save();
     }
 
-    /* private function convert(string $from, string $to, int $amount): int
-     {
-         $currencies = $this->currencyRepository->all()->values();
+    private function convert(string $from, string $to, int $amount): array
+    {
+        $currencies = $this->currencyRepository->all();
 
+        $fromCurrency = $currencies[$from];
+        $toCurrency = $currencies[$to];
 
-         $fromCurrency = $currencies->where('id', $from)->first();
-         dd($currencies->where('id', 'EUR'));
-         $senderCurrencyRate = $senderCurrency->rate;
+        $fromCurrencyRate = $fromCurrency->getRate();
+        $toCurrencyRate = $toCurrency->getRate();
 
-         $recipientCurrency = $currencies->where('symbol', $recipientAccount->currency)->first();
-         $recipientCurrencyRate = $recipientCurrency->rate;
+        $exchangeRate = $toCurrencyRate / $fromCurrencyRate;
 
-         $exchangeRate = $recipientCurrencyRate / $senderCurrencyRate;
-
-     }*/
-
+        return [
+            'convertedAmount' => $exchangeRate * $amount,
+            'exchangeRate' => $exchangeRate
+        ];
+    }
 }

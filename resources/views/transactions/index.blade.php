@@ -72,15 +72,17 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">
                                             <div
-                                                class="text-sm leading-5 text-blue-900">{{$transaction->accountFrom->number}}</div>
+                                                class="text-sm leading-5 text-blue-900">
+                                                {{$transaction->accountFrom->number}} ({{$transaction->accountFrom->currency}})
+                                            </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5">
-                                            {{$transaction->accountTo->number}}
+                                            {{$transaction->accountTo->number}} ({{$transaction->accountTo->currency}})
                                         </td>
 
                                         @if($transaction->accountTo->id === $account->id )
                                         <td class="px-6 py-4 whitespace-no-wrap border-b bg-green-200 text-blue-900 border-gray-500 text-sm leading-5">
-                                            + {{number_format($transaction->amount, 2)}}
+                                            + {{number_format($transaction->amount_converted, 2)}}
                                         </td>
                                         @endif
                                         @if($transaction->accountFrom->id === $account->id )

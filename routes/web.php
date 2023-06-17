@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\CryptoController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transactions');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/crypto', [CryptoController::class, 'index'])->name('crypto.index');
 });
 
 require __DIR__.'/auth.php';

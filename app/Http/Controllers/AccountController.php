@@ -25,7 +25,7 @@ class AccountController extends Controller
 
     public function create()
     {
-        $currencies = $this->currencyRepository->currencies();
+        $currencies = $this->currencyRepository->all();
         return view('accounts.create', [
             'currencies' => $currencies
         ]);
