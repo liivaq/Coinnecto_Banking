@@ -28,7 +28,7 @@
             @endif--}}
 
             <!-- Page Content -->
-            <main>
+            <main class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-5 overflow-hidden">
                 {{ $slot }}
             </main>
         </div>

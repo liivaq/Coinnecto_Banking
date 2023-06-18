@@ -46,9 +46,10 @@ class RegisteredUserController extends Controller
         ]);
 
         $user->accounts()->create([
-            'name' => 'Main',
+            'name' => 'Main Checking Account',
             'currency' => 'EUR',
-            'number' => $this->generateAccountNumber()
+            'number' => $this->generateAccountNumber(),
+            'type' => 'checking',
         ]);
 
         event(new Registered($user));
@@ -70,13 +71,4 @@ class RegisteredUserController extends Controller
         return $account;
     }
 
-    private function generateSecurityCodes(int $amount = 15, int $codeLength = 4): string
-    {
-        $codes = [];
-        for ($i = 0; $i < $amount; $i++) {
-            $codes[] = str_pad(random_int(0, 999999), $codeLength, 0, STR_PAD_LEFT);;
-        }
-
-        return json_encode($codes);
-    }
 }

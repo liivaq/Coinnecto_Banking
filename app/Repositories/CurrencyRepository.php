@@ -18,13 +18,12 @@ class CurrencyRepository
     public function all(): array
     {
         $currencyCollection = [];
+        $currencyCollection['EUR'] = new Currency('EUR', 1);
         foreach ($this->currencies as $currency){
             $currencyCollection[$currency['ID']] = new Currency(
                 $currency['ID'],
                 (float)$currency['Rate']);
         }
-
-        $currencyCollection['EUR'] = new Currency('EUR', 1);
         return $currencyCollection;
     }
 }

@@ -67,7 +67,7 @@ class TransactionController extends Controller
             $exchangeRate
         );
 
-        return redirect('/transactions');
+        return redirect(route('transactions.index'));
 
     }
 

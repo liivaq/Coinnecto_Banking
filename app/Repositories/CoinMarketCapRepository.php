@@ -28,7 +28,6 @@ class CoinMarketCapRepository
                     "X-CMC_PRO_API_KEY" => $this->apiKey
                 ],
                 'query' => [
-                    'limit' => 5,
                     'convert' => 'EUR'
                 ]
             ]

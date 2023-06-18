@@ -17,12 +17,15 @@ class AccountFactory extends Factory
      */
     public function definition()
     {
+        $types = ['checking', 'investment'];
+
         return [
             'user_id' => User::factory(),
             'currency' => $this->faker->currencyCode,
             'number' => $this->faker->iban,
             'balance' => $this->faker->numberBetween(100, 2000),
-            'name' => $this->faker->sentence(2)
+            'name' => $this->faker->sentence(2),
+            'type' => $types[rand(0,1)]
         ];
     }
 }

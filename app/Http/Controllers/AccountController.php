@@ -16,8 +16,7 @@ class AccountController extends Controller
     }
     public function index()
     {
-        $user = User::find(auth()->user()->getAuthIdentifier());
-        $accounts = $user->accounts()->get();
+        $accounts = auth()->user()->accounts()->get();
         return view('accounts.index', [
             'accounts' => $accounts
         ]);
@@ -41,7 +40,8 @@ class AccountController extends Controller
         $account = (new Account)->fill([
             'name' => $request->name,
             'currency' => $request->currency,
-            'number' => $this->generateAccountNumber($request->currency)
+            'number' => $this->generateAccountNumber($request->currency),
+            'type' => $request->type
         ]);
 
         $account->user()->associate(auth()->user());

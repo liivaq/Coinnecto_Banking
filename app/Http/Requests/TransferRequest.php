@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\MaxBalance;
 use App\Rules\Otp;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,7 +25,7 @@ class TransferRequest extends FormRequest
     {
         return [
             'account_to' => 'required|exists:accounts,number',
-            'amount' => ['required', 'numeric', 'min:1', /*'max:' . $accountFrom->balance*/],
+            'amount' => ['required', 'numeric', 'min:1'],
             /*'one_time_password' => ['required', new Otp()],*/
         ];
     }
@@ -33,7 +34,6 @@ class TransferRequest extends FormRequest
     {
         throw new ValidationException($validator, $this->redirector->to($this->getRedirectUrl())
             ->withErrors($validator)
-            ->withInput($this->except($this->dontFlash))
-            ->with('custom_error', 'Please provide a valid "To" account number.'));
+            ->with('custom_error', 'The provided account does not exist'));
     }
 }

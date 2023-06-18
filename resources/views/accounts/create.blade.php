@@ -5,47 +5,51 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <form class="bg-white" action="/accounts/create" method="POST">
-                    @csrf
-                    <h1 class="text-gray-800 font-bold text-2xl mb-1">Create a new account</h1>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div class="max-w-xl">
+                <h2 class="text-lg font-medium text-gray-900">
+                    Create a new Account
+                </h2>
 
-                    <div class="flex items-center border-2 py-2 px-3 rounded-2xl mt-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                             fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                  clip-rule="evenodd"/>
-                        </svg>
-                        <label for="name"></label>
-                        <input class="pl-2 outline-none border-none" type="text" name="name" id="name"
-                               value="{{ old('name') }}"
-                               placeholder="Account name"/>
-                    </div>
-                    @error('name')
-                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                <p class="mt-1 text-sm text-gray-600">
+                    Select your new account's name, type and currency
+                </p>
+                <form method="post" action="{{ route('accounts.store') }}" class="mt-6 space-y-6">
+                    @csrf
 
                     <div>
-                        <label for="currency">
-
-                        </label>
-                        <select class="bg-white text-gray-400 w-full flex items-center border-2 py-2 px-3 rounded-2xl mt-4" name="currency" id="currency">
-                            <option value="" selected disabled hidden>
-                                Select currency
-                            </option>
-                            @foreach($currencies as $currency)
-                                <option value="{{$currency->getId()}}">{{$currency->getId()}}</option>
-                            @endforeach
-                        </select>
+                        <x-input-label for="name" value="Name"/>
+                        <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" placeholder="My USD account"/>
+                        @error('name')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    <button type="submit"
-                            class="block w-full bg-sky-900 mt-4 py-2 rounded-2xl text-white font-semibold mb-2">Create
-                    </button>
+                    <div>
+                        <x-input-label for="type" value="Account type"/>
+                        <x-selection-input id="type" name="type" type="type" class="mt-1 block w-full">
+                            <option>Checking Account</option>
+                            <option>Investment Account</option>
+                        </x-selection-input>
+                    </div>
+
+                    <div>
+                        <x-input-label for="currency" value="Currency"/>
+                        <x-selection-input id="currency" name="currency" type="currency" class="mt-1 block w-full">
+                            @foreach($currencies as $currency)
+                            <option>{{$currency->getId()}}</option>
+                            @endforeach
+                        </x-selection-input>
+                    </div>
+
+                    <div>
+                        <x-primary-button>Create</x-primary-button>
+                        <a href="{{ route('accounts') }}"><x-secondary-button>Cancel</x-secondary-button></a>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
+
 </x-app-layout>
