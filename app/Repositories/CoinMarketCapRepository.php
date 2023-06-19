@@ -44,6 +44,26 @@ class CoinMarketCapRepository
         return $cryptoCollection;
     }
 
+    public function findById(int $id)
+    {
+        $response = $this->client->get('v1/cryptocurrency/quotes/latest',
+            [
+                'headers' => [
+                    "Accepts" => " application/json",
+                    "X-CMC_PRO_API_KEY" => $this->apiKey
+                ],
+                'query' => [
+                    'id' => $id,
+                    'convert' => 'EUR'
+                ]
+            ]
+        );
+
+        $coin = json_decode($response->getBody()->getContents())->data->{$id};
+
+        return $this->buildModel($coin);
+    }
+
     private function buildModel(\stdClass $coin): CryptoCoin
     {
         return new CryptoCoin(

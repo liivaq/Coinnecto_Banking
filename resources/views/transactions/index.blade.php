@@ -12,10 +12,6 @@
                     <p class="text-xl font-bold mb-5">{{$account->name}}
                         <span class="text-gray-500 text-sm">{{$account->number}}</span></p>
 
-                    @if(count($transactions) === 0)
-                        <h3> You have no transactions in this account!</h3>
-                    @endif
-
                     <ul>
                         @foreach ($transactions as $transaction)
                             @if($transaction->accountFrom->id === $account->id || $transaction->accountTo->id === $account->id )

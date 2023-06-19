@@ -68,16 +68,15 @@
 
         </div>
         <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
-            <form class="bg-white" action="/register" method="POST">
+           {{-- <form class="bg-white" action="/register" method="POST">
                 @csrf
-                <h1 class="text-gray-800 font-bold text-4xl mb-1">Welcome!</h1>
-                <p class="text-2xl font-normal  text-gray-600 mb-7">Register to open your first account</p>
+
 
                 <div class="flex items-center border-2 py-2 px-3 rounded-2xl mt-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20"
-                         fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                              clip-rule="evenodd"/>
+                    <svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5 text-gray-400' viewBox='0 0 20 20'
+                         fill='currentColor'>
+                        <path fill-rule='evenodd' d='M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z'
+                              clip-rule='evenodd'/>
                     </svg>
                     <input class="pl-2 outline-none border-none" type="text" name="name" id="name"
                            value="{{ old('name') }}"
@@ -138,6 +137,66 @@
                     Already registered?
                     <a href="/login" class="text-blue-500"> Log in!</a>
                 </span>
+            </form>--}}
+            <form method="POST" action="{{ route('register') }}">
+                @csrf
+
+                <h1 class="text-gray-800 font-bold text-4xl mb-1">Welcome!</h1>
+                <p class="text-2xl font-normal  text-gray-600 mb-7">Register to open your first account</p>
+
+                <!-- Name -->
+                <div>
+                    <x-input-label for="name" :value="__('Full Name')" />
+                    <x-text-input
+                        id="name" class="block mt-1 w-full" type="text" name="name"
+                        :value="old('name')" required autofocus autocomplete="name"
+                        placeholder="John Doe"
+                    />
+                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                </div>
+
+                <!-- Email Address -->
+                <div class="mt-4">
+                    <x-input-label for="email" :value="__('Email')" />
+                    <x-text-input id="email" class="block mt-1 w-full" type="email"
+                                  name="email" :value="old('email')"
+                                  required autocomplete="username" placeholder="example@email.com"
+                    />
+                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                </div>
+
+                <!-- Password -->
+                <div class="mt-4">
+                    <x-input-label for="password" :value="__('Password')" />
+
+                    <x-text-input id="password" class="block mt-1 w-full"
+                                  type="password"
+                                  name="password"
+                                  required autocomplete="new-password" />
+
+                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                </div>
+
+                <!-- Confirm Password -->
+                <div class="mt-4">
+                    <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
+
+                    <x-text-input id="password_confirmation" class="block mt-1 w-full"
+                                  type="password"
+                                  name="password_confirmation" required autocomplete="new-password" />
+
+                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+                </div>
+
+                <div class="flex items-center justify-end mt-4">
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
+                        {{ __('Already registered? Log in!') }}
+                    </a>
+
+                    <x-primary-button class="ml-4">
+                        {{ __('Register') }}
+                    </x-primary-button>
+                </div>
             </form>
         </div>
     </div>

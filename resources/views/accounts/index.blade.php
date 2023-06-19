@@ -15,19 +15,12 @@
                 <x-primary-button>Create a new Account</x-primary-button>
             </a>
 
-            <a href="#">
-                <x-primary-button type="button">
-                    Deposit
-                </x-primary-button>
-            </a>
-
             <a href="{{ route('transactions.create') }}">
                 <x-primary-button type="button">
                     New Transaction
                 </x-primary-button>
             </a></div>
     </div>
-
 
     <ul role="list" class="flex-wrap gap-y-10">
         @foreach($accounts as $account)
@@ -36,8 +29,16 @@
                     <div class="font-bold text-2xl">{{ $account->name }}</div>
                     <div class="text-gray-600">{{ $account->number }}</div>
                 </div>
-                <div class="my-auto text-2xl text-gray-600">
-                    {{ number_format($account->balance, 2) }} {{strtoupper($account->currency)}}
+                <div class="flex my-auto text-2xl text-gray-600">
+                    <div
+                        class="mr-6">{{ number_format($account->balance, 2) }} {{strtoupper($account->currency)}}</div>
+                    <div>
+                        <a href="#">
+                            <x-primary-button type="button">
+                                Deposit
+                            </x-primary-button>
+                        </a>
+                    </div>
                 </div>
             </li>
         @endforeach

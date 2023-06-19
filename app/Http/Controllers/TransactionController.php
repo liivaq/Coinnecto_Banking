@@ -37,8 +37,7 @@ class TransactionController extends Controller
 
     public function create()
     {
-        $user = User::find(auth()->user()->getAuthIdentifier());
-        $accounts = $user->accounts()->get();
+        $accounts = auth()->user()->accounts()->get();
         return view('transactions.create', [
             'accounts' => $accounts
         ]);

@@ -30,4 +30,16 @@ class CryptoController extends Controller
             'cryptoCollection' => $cryptoCollection
         ]);
     }
+
+    public function show($id)
+    {
+        $crypto = $this->cryptoRepository->findById($id);
+
+        $accounts = auth()->user()->accounts()->where('type', 'investment')->get();
+
+        return view('crypto.show', [
+            'crypto' => $crypto,
+            'accounts' => $accounts
+        ]);
+    }
 }

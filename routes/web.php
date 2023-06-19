@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/crypto', [CryptoController::class, 'index'])->name('crypto.index');
+    Route::get('/crypto/{id}', [CryptoController::class, 'show'])->name('crypto.show');
 });
 
 require __DIR__.'/auth.php';

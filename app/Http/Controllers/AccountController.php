@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
-use App\Models\User;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;
 

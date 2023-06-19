@@ -29,8 +29,8 @@
                     <div>
                         <x-input-label for="type" value="Account type"/>
                         <x-selection-input id="type" name="type" type="type" class="mt-1 block w-full">
-                            <option>Checking Account</option>
-                            <option>Investment Account</option>
+                            <option value="checking">Checking Account</option>
+                            <option value="investment">Investment Account</option>
                         </x-selection-input>
                     </div>
 
