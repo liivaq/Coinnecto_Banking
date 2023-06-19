@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,7 +17,18 @@ class ProfileController extends Controller
 {
     public function edit(Request $request): View
     {
+        $google2fa = app('pragmarx.google2fa');
+
+        $QR_Image = $google2fa->getQRCodeInline(
+            $request->user()->name,
+            $request->user()->email,
+            $request->user()->google2fa_secret
+        );
+
+
         return view('profile.edit', [
+            'name' => 'QR',
+            'image' => $QR_Image,
             'user' => $request->user(),
         ]);
     }

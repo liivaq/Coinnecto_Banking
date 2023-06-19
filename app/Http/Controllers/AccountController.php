@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class AccountController extends Controller
 {
@@ -13,6 +14,7 @@ class AccountController extends Controller
     public function __construct(CurrencyRepository $currencyRepository){
         $this->currencyRepository = $currencyRepository;
     }
+
     public function index()
     {
         $accounts = auth()->user()->accounts()->get();

@@ -87,7 +87,14 @@
                         </div>
 
                         <div>
-                            <x-input-label for="one_time_password" value="Verify"/>
+                            <div class="flex gap-x-2">
+                                <x-input-label for="one_time_password" value="Verify Transaction"/>
+                                <x-tooltip>
+                                    Use an authenticator app - enter the code below.
+                                    See more information on your
+                                    <a class="text-decoration-line: underline" href="{{ route('profile.edit') }}">Profile page</a>
+                                </x-tooltip>
+                            </div>
                             <x-text-input id="one_time_password" name="one_time_password" type="text"
                                           class="mt-1 block w-full"
                                           placeholder="1234"/>
