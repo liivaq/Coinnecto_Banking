@@ -9,11 +9,13 @@ use App\Models\CryptoTransaction;
 use App\Models\User;
 use App\Models\UserCrypto;
 use App\Repositories\CoinMarketCapRepository;
+use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redirect;
 
 class CryptoController extends Controller
 {
@@ -50,6 +52,18 @@ class CryptoController extends Controller
             'accounts' => $accounts,
             'userCrypto' => $userCrypto
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        try {
+            $crypto = $this->cryptoRepository->findBySymbol($request->search);
+            return view('crypto.search', [
+                'cryptoCollection' => [$crypto]
+            ]);
+        }catch(Exception $exception){
+            return Redirect::back()->withErrors(['error' => 'Nothing was found. Check your spelling!']);
+        }
     }
 
     public function userCryptos()

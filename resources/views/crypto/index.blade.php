@@ -7,8 +7,10 @@
 
     <div class="flex pb-6">
 
-            <div class="relative">
+            <form class="relative" action="{{route('crypto.search')}}">
+                @csrf
                 <x-text-input
+                    name="search"
                     type="text"
                     placeholder="Search"
                 ></x-text-input>
@@ -17,7 +19,10 @@
                 >
                     Search
                 </x-primary-button>
-            </div>
+            </form>
+        @if($errors->any())
+            <div class="bg-rose-400 py-2 px-2 ml-2 text-white rounded-xl">{{$errors->first()}}</div>
+        @endif
 
     </div>
     <div class="bg-white shadow-md rounded-md">

@@ -67,6 +67,31 @@ class CoinMarketCapRepository
         return $this->buildModel($coin);
     }
 
+    public function findBySymbol(string $symbol): CryptoCoin
+    {
+        $response = $this->client->get('v1/cryptocurrency/quotes/latest',
+            [
+                'headers' => [
+                    "Accepts" => " application/json",
+                    "X-CMC_PRO_API_KEY" => $this->apiKey
+                ],
+                'query' => [
+                    'symbol' => $symbol,
+                    'convert' => 'EUR'
+                ]
+            ]
+        );
+
+        $coin = json_decode($response->getBody()->getContents())->data;
+
+        if(!count((array)$coin)) {
+            throw new \Exception();
+        }
+
+
+        return $this->buildModel($coin->{strtoupper($symbol)});
+    }
+
 
     public function findMultipleById(array $ids): array
     {
