@@ -15,7 +15,7 @@
                 <p class="mt-1 text-sm text-gray-600">
                     Send money to any account - automatic conversion rates apply.
                 </p>
-                <form method="post" action="{{ route('transactions') }}" class="mt-6 space-y-6">
+                <form method="post" action="{{ route('transactions.transfer') }}" class="mt-6 space-y-6">
                     @csrf
 
                     <div>
@@ -35,7 +35,7 @@
                         <x-text-input id="account_to" name="account_to" type="text" class="mt-1 block w-full"
                                       placeholder="Recipient's account number" :value="old('account_to')"/>
                         @error('account_to')
-                        <p class="text-red-500 text-xs mt-1">The provided account does not exist</p>
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -72,7 +72,7 @@
 
                     <div>
                         <x-primary-button>Transfer</x-primary-button>
-                        <a href="{{ route('accounts') }}">
+                        <a href="{{ route('accounts.index') }}">
                             <x-secondary-button>Cancel</x-secondary-button>
                         </a>
                     </div>

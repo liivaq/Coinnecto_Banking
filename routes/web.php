@@ -32,20 +32,23 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/accounts', [AccountController::class, 'index'])->name('accounts');
+    Route::get('/accounts', [AccountController::class, 'index'])->name('accounts.index');
     Route::get('/accounts/create', [AccountController::class, 'create'])->name('accounts.create');
     Route::post('/accounts/create', [AccountController::class, 'store'])->name('accounts.store');
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transactions');
+    Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transactions.transfer');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/crypto', [CryptoController::class, 'index'])->name('crypto.index');
+    Route::get('/crypto/portfolio', [CryptoController::class, 'userCryptos'])->name('crypto.portfolio');
     Route::get('/crypto/{id}', [CryptoController::class, 'show'])->name('crypto.show');
+    Route::post('/crypto/buy', [CryptoController::class, 'buy'])->name('crypto.buy');
+    Route::post('/crypto/sell', [CryptoController::class, 'sell'])->name('crypto.sell');
 });
 
 require __DIR__.'/auth.php';

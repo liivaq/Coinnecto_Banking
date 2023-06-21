@@ -20,9 +20,11 @@ class TransferRequest extends FormRequest
 
     public function rules(): array
     {
+        $accountFrom = auth()->user()->accounts()->where('number', $this->input('account_from'))->first();
+
         return [
-            'account_to' => 'required|exists:accounts,number',
-            'amount' => ['required', 'numeric', 'min:1'],
+            'account_to' => ['required', 'exists:accounts,number', 'different:account_from'],
+            'amount' => ['required', 'numeric', 'min:0.01', 'max:'. $accountFrom->balance],
             'one_time_password' => ['required', new Otp()]
         ];
     }

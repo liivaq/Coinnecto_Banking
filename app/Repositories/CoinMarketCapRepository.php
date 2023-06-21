@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\CryptoCoin;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Http;
 
 class CoinMarketCapRepository
 {
@@ -28,7 +29,8 @@ class CoinMarketCapRepository
                     "X-CMC_PRO_API_KEY" => $this->apiKey
                 ],
                 'query' => [
-                    'convert' => 'EUR'
+                    'convert' => 'EUR',
+                    'limit' => 10
                 ]
             ]
         );
@@ -42,9 +44,10 @@ class CoinMarketCapRepository
         }
 
         return $cryptoCollection;
+
     }
 
-    public function findById(int $id)
+    public function findById(int $id): CryptoCoin
     {
         $response = $this->client->get('v1/cryptocurrency/quotes/latest',
             [
@@ -64,6 +67,34 @@ class CoinMarketCapRepository
         return $this->buildModel($coin);
     }
 
+
+    public function findMultipleById(array $ids): array
+    {
+        $response = $this->client->get('v1/cryptocurrency/quotes/latest',
+            [
+                'headers' => [
+                    "Accepts" => " application/json",
+                    "X-CMC_PRO_API_KEY" => $this->apiKey
+                ],
+                'query' => [
+                    'id' => implode(',', $ids),
+                    'convert' => 'EUR'
+                ]
+            ]
+        );
+
+        $coins = json_decode($response->getBody()->getContents())->data;
+
+        $cryptoCollection = [];
+
+        foreach ($coins as $coin) {
+            $cryptoCollection[] = $this->buildModel($coin);
+        }
+
+        return $cryptoCollection;
+    }
+
+
     private function buildModel(\stdClass $coin): CryptoCoin
     {
         return new CryptoCoin(
@@ -71,10 +102,9 @@ class CoinMarketCapRepository
             $coin->name,
             $coin->symbol,
             $coin->quote->EUR->price,
+            'https://coinicons-api.vercel.app/api/icon/' . strtolower($coin->symbol),
             $coin->quote->EUR->percent_change_1h,
             $coin->quote->EUR->percent_change_24h,
         );
-
     }
-
 }

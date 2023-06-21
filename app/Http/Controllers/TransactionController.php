@@ -27,7 +27,8 @@ class TransactionController extends Controller
 
         $transactions = Transaction::with(['accountTo', 'accountFrom'])
             ->whereIn('account_from_id', $accounts->pluck('id'))
-            ->orWhereIn('account_to_id', $accounts->pluck('id'))->get();
+            ->orWhereIn('account_to_id', $accounts->pluck('id'))
+            ->get();
 
         return view('transactions.index', [
             'accounts' => $accounts,

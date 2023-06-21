@@ -17,21 +17,78 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('accounts')" :active="request()->routeIs('accounts')">
+                    <x-nav-link :href="route('accounts.index')" :active="request()->routeIs('accounts.index')">
                         {{ __('Accounts') }}
                     </x-nav-link>
                 </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.index')">
+                <div class="hidden sm:-my-px sm:flex text-white">
+                    {{--<x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.index')">
                         {{ __('Transactions') }}
-                    </x-nav-link>
-                </div>
-                <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                    <x-nav-link :href="route('crypto.index')" :active="request()->routeIs('crypto.index')">
-                        {{ __('Crypto') }}
-                    </x-nav-link>
-                </div>
+                    </x-nav-link>--}}
+                    <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <x-dropdown align="right" width="48">
+                        <x-slot name="trigger">
+                            <div
+                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm hover:cursor-pointer">
+                                <div>Transactions</div>
 
+                                <div class="ml-1">
+                                    <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                         viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                              d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </x-slot>
+
+                        <x-slot name="content">
+                            <x-dropdown-link :href="route('transactions.create')">
+                                {{ __('New Transaction') }}
+                            </x-dropdown-link>
+
+                            <x-dropdown-link :href="route('transactions.index')">
+                                {{ __('Transaction History') }}
+                            </x-dropdown-link>
+                        </x-slot>
+                    </x-dropdown>
+                    </div>
+                </div>
+                <div class="hidden sm:-my-px sm:flex text-white">
+                   {{-- <x-nav-link :href="route('crypto.index')" :active="request()->routeIs('crypto.index')">
+                        {{ __('Crypto') }}
+                    </x-nav-link>--}}
+                    <div class="hidden sm:flex sm:items-center sm:ml-6">
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <div
+                                    class="inline-flex items-center px-3 py-2 border border-transparent text-sm hover:cursor-pointer">
+                                    <div>Crypto</div>
+
+                                    <div class="ml-1">
+                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                             viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                  clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </x-slot>
+
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('crypto.index')">
+                                    {{ __('Crypto Market') }}
+                                </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('crypto.portfolio')">
+                                    {{ __('Your Crypto Portfolio') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
@@ -93,6 +150,21 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('accounts.index')" :active="request()->routeIs('accounts.index')">
+                {{ __('Accounts') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.index')">
+                {{ __('Transactions') }}
+            </x-responsive-nav-link>
+        </div>
+        <div class="pt-2 pb-3 space-y-1">
+            <x-responsive-nav-link :href="route('crypto.portfolio')" :active="request()->routeIs('crypto.portfolio')">
+                {{ __('Crypto Portfolio') }}
             </x-responsive-nav-link>
         </div>
 

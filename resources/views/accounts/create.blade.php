@@ -45,7 +45,7 @@
 
                     <div>
                         <x-primary-button>Create</x-primary-button>
-                        <a href="{{ route('accounts') }}"><x-secondary-button>Cancel</x-secondary-button></a>
+                        <a href="{{ route('accounts.index') }}"><x-secondary-button>Cancel</x-secondary-button></a>
                     </div>
                 </form>
             </div>

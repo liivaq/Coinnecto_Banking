@@ -5,6 +5,21 @@
         </h2>
     </x-slot>
 
+    <div class="flex pb-6">
+
+            <div class="relative">
+                <x-text-input
+                    type="text"
+                    placeholder="Search"
+                ></x-text-input>
+                <x-primary-button
+                    type="submit"
+                >
+                    Search
+                </x-primary-button>
+            </div>
+
+    </div>
     <div class="bg-white shadow-md rounded-md">
         <div class="overflow-x-auto">
             <div class="min-w-screen min-h-screen flex items-center justify-center">
@@ -12,6 +27,9 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                         <tr>
+                            <th class="px-6 py-3 bg-gray-100 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+
+                            </th>
                             <th class="px-6 py-3 bg-gray-100 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
                                 Name
                             </th>
@@ -32,7 +50,16 @@
                         </thead>
                         <tbody>
                         @foreach($cryptoCollection as $crypto)
-                        <tr>
+                        <tr  class="divide-y divide-gray-200">
+                            <td class="px-6 py-4 whitespace-no-wrap">
+                                <div class="flex items-center">
+                                    <div class="ml-4">
+                                        <div class="text-sm leading-5 font-medium text-gray-900">
+                                            <img class=" w-8" src="{{$crypto->getIconUrl()}}" alt="{{$crypto->getSymbol()}}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
                             <td class="px-6 py-4 whitespace-no-wrap">
                                 <div class="flex items-center">
                                     <div class="ml-4">
@@ -61,7 +88,7 @@
 
                             @if($crypto->getPercentChange24h() > 0)
                             <td class="px-6 py-4 whitespace-no-wrap">
-                                <div class="text-sm leading-5 text-red-500">+{{$crypto->getPercentChange24h()}}</div>
+                                <div class="text-sm leading-5 text-green-500">+{{$crypto->getPercentChange24h()}}</div>
                             </td>
                             @endif
 

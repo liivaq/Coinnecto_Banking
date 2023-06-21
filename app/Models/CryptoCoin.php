@@ -8,22 +8,25 @@ class CryptoCoin
     private string $name;
     private string $symbol;
     private float $price;
+    private string $iconUrl;
     private float $percentChange1h;
     private float $percentChange24h;
 
     public function __construct(
-        int $id,
+        int    $id,
         string $name,
         string $symbol,
-        float $price,
-        float $percentChange1h,
-        float $percentChange24h
+        float  $price,
+        string $iconUrl,
+        float  $percentChange1h,
+        float  $percentChange24h
     )
     {
         $this->id = $id;
         $this->name = $name;
         $this->symbol = $symbol;
         $this->price = $price;
+        $this->iconUrl = $iconUrl;
         $this->percentChange1h = $percentChange1h;
         $this->percentChange24h = $percentChange24h;
     }
@@ -57,6 +60,11 @@ class CryptoCoin
     public function getPercentChange24h(): float
     {
         return $this->percentChange24h;
+    }
+
+    public function getIconUrl(): string
+    {
+        return $this->iconUrl;
     }
 
 }
