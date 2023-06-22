@@ -5,6 +5,10 @@
         </h2>
     </x-slot>
 
+    @if ($message = Session::get('success'))
+        <x-flash>{{$message}}</x-flash>
+    @endif
+
     <div class="flex gap-x-5 mt-2 mb-6 bg-white p-5 rounded-xl justify-between">
         <div>
             <h1 class="text-2xl font-bold">Account Overview</h1>

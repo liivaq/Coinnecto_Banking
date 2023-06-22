@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Models\CryptoCoin;
 use App\Models\CryptoTransaction;
-use App\Models\Transaction;
 use App\Repositories\CoinMarketCapRepository;
 use App\Rules\MaxPrice;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 class CryptoTransactionController extends Controller
 {
@@ -59,8 +59,7 @@ class CryptoTransactionController extends Controller
         $this->saveUserCrypto($crypto, $request);
         $this->saveCryptoTransaction($crypto, $request, $account);
 
-        return redirect(route('crypto.portfolio'));
-
+        return Redirect::to(route('crypto.portfolio'))->with('success', 'Purchase Successful!');
     }
 
     public function sell(Request $request)
@@ -85,7 +84,7 @@ class CryptoTransactionController extends Controller
         $this->saveUserCrypto($cryptoCoin, $request);
         $this->saveCryptoTransaction($cryptoCoin, $request, $account);
 
-        return redirect(route('crypto.portfolio'));
+        return Redirect::to(route('crypto.portfolio'))->with('success', 'Crypto Sold!');
     }
 
     public function saveCryptoTransaction(CryptoCoin $coin, Request $request, Account $account): void
@@ -93,7 +92,8 @@ class CryptoTransactionController extends Controller
         $transaction = (new CryptoTransaction())->fill([
             'account_id' => $account->id,
             'cmc_id' => $coin->getId(),
-            'price' => $coin->getPrice(),
+            'name' => $coin->getName(),
+            'price' => $coin->getPrice() * $request->amount,
             'amount' => $request->amount,
             'type' => $request->type,
         ]);

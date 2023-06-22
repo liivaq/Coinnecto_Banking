@@ -1,5 +1,9 @@
 <x-app-layout>
 
+    @if ($message = Session::get('success'))
+        <x-flash>{{$message}}</x-flash>
+    @endif
+
     @if(!$cryptos)
         <div class="mt-4 mb-6 bg-white p-5 rounded-xl">
             <div>

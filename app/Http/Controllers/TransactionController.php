@@ -10,6 +10,7 @@ use App\Repositories\CurrencyRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Redirect;
 
 class TransactionController extends Controller
 {
@@ -19,7 +20,6 @@ class TransactionController extends Controller
     {
         $this->currencyRepository = $currencyRepository;
     }
-
 
     public function index()
     {
@@ -67,7 +67,7 @@ class TransactionController extends Controller
             $exchangeRate
         );
 
-        return redirect(route('transactions.index'));
+        return Redirect::to(route('transactions.index'))->with('success', 'Transaction successful!');
 
     }
 

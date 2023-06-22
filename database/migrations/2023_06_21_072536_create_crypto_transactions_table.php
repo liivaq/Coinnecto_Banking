@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('account_id');
             $table->integer('cmc_id');
+            $table->string('name');
             $table->float('price');
             $table->float('amount');
             $table->string('type');

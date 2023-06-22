@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 
 class AccountController extends Controller
@@ -48,7 +49,8 @@ class AccountController extends Controller
         $account->user()->associate(auth()->user());
         $account->save();
 
-        return redirect('/accounts')->with('message', 'Account created successfully');
+        return Redirect::to('/accounts')->with('success', 'Account created Successfully!');
+
     }
 
     private function generateAccountNumber(string $currency, int $length = 21): string
