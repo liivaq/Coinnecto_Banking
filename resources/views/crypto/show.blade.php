@@ -67,7 +67,7 @@
                 <p class="mt-1 text-sm text-gray-600">
                     Buy and sell your {{$crypto->getName()}}
                 </p>
-                <form method="post" action="{{ route('crypto.buy') }}" class="mt-6 space-y-6">
+                <form method="post" action="{{ route('crypto.buy') }}" class="mt-6 space-y-6" autocomplete="off">
                     @csrf
                     <div>
                         <x-input-label for="account" value="Choose your investment account"/>
@@ -88,13 +88,20 @@
 
                         <x-input-label for="amount" value="Amount"/>
                         <x-text-input id="amount" name="amount" type="number" class="mt-1 block w-full"
-                                      placeholder="5" :value="old('amount')" x-model="price"/>
+                                      :value="old('amount')" x-model="price"/>
 
-                        <p>Total price: <span x-text="price * {{$crypto->getPrice()}}"></span></p>
+                        <input type="hidden" id="price" name="price" value="{{$crypto->getPrice()}}">
 
                         @error('amount')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
+                        @error('price')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+
+                        <div class="mt-6">
+                            <p class="text-s text-gray-700">Total price: <span x-text="price * {{number_format($crypto->getPrice(), 4)}}"> </span> €<p>
+                        </div>
 
 
                     </div>
@@ -117,7 +124,7 @@
                         @enderror
                     </div>
 
-                    <div x-data="{ hasCryptos: true }" x-init="hasCryptos = {{ isset($userCrypto->amount)  ? 'true' : 'false' }}">
+                    <div x-data="{ hasCryptos: true }" x-init="hasCryptos = {{ isset($userCrypto->amount) && $userCrypto->amount > 0  ? 'true' : 'false' }}">
                         <x-primary-button name="type" value="buy">Buy</x-primary-button>
                         <x-primary-button x-bind:disabled="!hasCryptos"
                                           x-bind:class="{ 'opacity-50 cursor-not-allowed': !hasCryptos }"

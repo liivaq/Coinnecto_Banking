@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\CryptoController;
+use App\Http\Controllers\CryptoTransactionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -21,11 +22,12 @@ Route::get('/', function () {
     return view('index');
 })->middleware('guest');
 
-Route::get('/dashboard', function () {
+/*Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');*/
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -44,12 +46,16 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/crypto/transactions', [CryptoTransactionController::class, 'transactions'])->name('crypto.transactions');
+    Route::post('/crypto/buy', [CryptoTransactionController::class, 'buy'])->name('crypto.buy');
+    Route::post('/crypto/sell', [CryptoTransactionController::class, 'sell'])->name('crypto.sell');
+});
+
+Route::middleware('auth')->group(function () {
     Route::get('/crypto', [CryptoController::class, 'index'])->name('crypto.index');
     Route::get('/crypto/portfolio', [CryptoController::class, 'userCryptos'])->name('crypto.portfolio');
     Route::get('/crypto/search', [CryptoController::class, 'search'])->name('crypto.search');
     Route::get('/crypto/{id}', [CryptoController::class, 'show'])->name('crypto.show');
-    Route::post('/crypto/buy', [CryptoController::class, 'buy'])->name('crypto.buy');
-    Route::post('/crypto/sell', [CryptoController::class, 'sell'])->name('crypto.sell');
 });
 
 require __DIR__.'/auth.php';

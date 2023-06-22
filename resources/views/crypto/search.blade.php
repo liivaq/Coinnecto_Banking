@@ -12,7 +12,7 @@
             <x-text-input
                 name="search"
                 type="text"
-                placeholder="Search"
+                placeholder="Search by Symbol"
             ></x-text-input>
             <x-primary-button
                 type="submit"

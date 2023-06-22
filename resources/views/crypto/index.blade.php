@@ -6,7 +6,6 @@
     </x-slot>
 
     <div class="flex pb-6">
-
             <form class="relative" action="{{route('crypto.search')}}">
                 @csrf
                 <x-text-input
@@ -17,7 +16,7 @@
                 <x-primary-button
                     type="submit"
                 >
-                    Search
+                    Search by Symbol
                 </x-primary-button>
             </form>
         @if($errors->any())

@@ -17,6 +17,11 @@ class Account extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function cryptoTransactions(): HasMany
+    {
+        return $this->hasMany(CryptoTransaction::class, 'account_id');
+    }
+
     public function transactionsOut(): HasMany
     {
         return $this->hasMany(Transaction::class, 'account_from_id' );

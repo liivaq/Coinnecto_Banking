@@ -14,8 +14,8 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gradient-to-tr from-cyan-900 to-cyan-500">
+    <body class="{{--font-sans antialiased bg-gradient-to-tr from-cyan-900 to-cyan-500 min-h-screen--}}">
+        <div class="container font-sans antialiased bg-gradient-to-tr from-cyan-900 to-cyan-500 min-h-screen min-w-full ">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -28,7 +28,7 @@
             @endif--}}
 
             <!-- Page Content -->
-            <main class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-5 overflow-hidden">
+            <main class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-5 overflow-hidden flex-grow">
                 {{ $slot }}
             </main>
         </div>

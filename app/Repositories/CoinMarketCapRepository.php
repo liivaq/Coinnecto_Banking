@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\CryptoCoin;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Http;
 
 class CoinMarketCapRepository
 {
@@ -84,10 +83,9 @@ class CoinMarketCapRepository
 
         $coin = json_decode($response->getBody()->getContents())->data;
 
-        if(!count((array)$coin)) {
+        if (!count((array)$coin)) {
             throw new \Exception();
         }
-
 
         return $this->buildModel($coin->{strtoupper($symbol)});
     }
@@ -110,6 +108,10 @@ class CoinMarketCapRepository
 
         $coins = json_decode($response->getBody()->getContents())->data;
 
+        if (!count((array)$coins)) {
+            throw new \Exception();
+        }
+
         $cryptoCollection = [];
 
         foreach ($coins as $coin) {
@@ -117,6 +119,7 @@ class CoinMarketCapRepository
         }
 
         return $cryptoCollection;
+
     }
 
 

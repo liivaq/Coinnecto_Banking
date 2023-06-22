@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CryptoTransactionRequest;
 use App\Models\Account;
 use App\Models\CryptoCoin;
 use App\Models\CryptoTransaction;
-use App\Models\User;
-use App\Models\UserCrypto;
 use App\Repositories\CoinMarketCapRepository;
+use App\Rules\MaxPrice;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -35,7 +33,6 @@ class CryptoController extends Controller
             Cache::put('crypto', $cryptoCollection, now()->addSeconds(120));
         }
 
-
         return view('crypto.index', [
             'cryptoCollection' => $cryptoCollection
         ]);
@@ -61,80 +58,24 @@ class CryptoController extends Controller
             return view('crypto.search', [
                 'cryptoCollection' => [$crypto]
             ]);
-        }catch(Exception $exception){
+        } catch (Exception $exception) {
             return Redirect::back()->withErrors(['error' => 'Nothing was found. Check your spelling!']);
         }
     }
 
     public function userCryptos()
     {
-        $cryptoIds = auth()->user()->cryptos()->pluck('cmc_id')->toArray();
-        $amounts = auth()->user()->cryptos()->pluck('amount', 'cmc_id');
-
-        $allUserCryptos = $this->cryptoRepository->findMultipleById($cryptoIds);
+        try {
+            $cryptoIds = auth()->user()->cryptos()->pluck('cmc_id')->toArray();
+            $amounts = auth()->user()->cryptos()->pluck('amount', 'cmc_id');
+            $allUserCryptos = $this->cryptoRepository->findMultipleById($cryptoIds);
+        } catch (Exception $exception) {
+            $allUserCryptos = [];
+        }
 
         return view('crypto.portfolio', [
             'amounts' => $amounts,
             'cryptos' => $allUserCryptos
         ]);
-    }
-
-
-    public function buy(Request $request)
-    {
-        $crypto = $this->cryptoRepository->findById($request->crypto_coin);
-
-        /** @var Account $account */
-        $account = Account::where('number', $request->account)->firstOrFail();
-
-        $toWithdraw = $crypto->getPrice() * $request->amount;
-
-        /*$request->validate([
-            'account_to' => 'required|exists:accounts,number',
-            'amount' => 'required|numeric|min:0.01|max:' . $accountFrom->balance,
-            'one_time_password' => ['required', new Otp()]
-        ]);*/
-
-
-        $account->withdraw($toWithdraw);
-
-        $this->saveUserCrypto($crypto, $request);
-        $this->saveCryptoTransaction($crypto, $request, $account);
-
-        return redirect(route('accounts.index'));
-
-    }
-
-    public function sell(Request $request)
-    {
-        dd($request);
-    }
-
-    public function saveCryptoTransaction(CryptoCoin $coin, Request $request, Account $account): void
-    {
-        $transaction = (new CryptoTransaction())->fill([
-            'account_id' => $account->id,
-            'cmc_id' => $coin->getId(),
-            'price' => $coin->getPrice(),
-            'amount' => $request->amount,
-            'type' => $request->type,
-        ]);
-
-        $transaction->save();
-    }
-
-    public function saveUserCrypto(CryptoCoin $coin, Request $request): void
-    {
-        $user = auth()->user();
-
-        $crypto = $user->cryptos()->firstOrNew([
-            'cmc_id' => $coin->getId(),
-        ]);
-
-        $crypto->user_id = $user->id;
-        $crypto->amount += $request->amount;
-
-        $crypto->save();
-
     }
 }

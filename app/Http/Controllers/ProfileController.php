@@ -15,6 +15,11 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
+
+    public function dashboard(){
+        return view('dashboard');
+    }
+
     public function edit(Request $request): View
     {
         $google2fa = app('pragmarx.google2fa');
@@ -24,7 +29,6 @@ class ProfileController extends Controller
             $request->user()->email,
             $request->user()->google2fa_secret
         );
-
 
         return view('profile.edit', [
             'name' => 'QR',

@@ -25,7 +25,7 @@ class TransferRequest extends FormRequest
         return [
             'account_to' => ['required', 'exists:accounts,number', 'different:account_from'],
             'amount' => ['required', 'numeric', 'min:0.01', 'max:'. $accountFrom->balance],
-            'one_time_password' => ['required', new Otp()]
+            //'one_time_password' => ['required', new Otp()]
         ];
     }
 }
