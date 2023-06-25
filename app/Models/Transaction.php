@@ -21,4 +21,17 @@ class Transaction extends Model
     {
         return $this->belongsTo(Account::class, 'account_from_id');
     }
+
+    public function scopeDateRange($query, $from, $to)
+    {
+        return $query->whereDate('created_at', '>=', $from)
+            ->whereDate('created_at', '<=', $to);
+    }
+
+    public function scopeSearchByAccountName($query, $searchTerm)
+    {
+        return $query->whereHas('accountTo', function ($query) use ($searchTerm) {
+            $query->where('name', 'like', '%'.$searchTerm.'%');
+        });
+    }
 }

@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
-use App\Models\CryptoCoin;
-use App\Models\CryptoTransaction;
 use App\Repositories\CoinMarketCapRepository;
-use App\Rules\MaxPrice;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -59,7 +55,7 @@ class CryptoController extends Controller
                 'cryptoCollection' => [$crypto]
             ]);
         } catch (Exception $exception) {
-            return Redirect::back()->withErrors(['error' => 'Nothing was found. Check your spelling!']);
+            return Redirect::back()->withErrors(['error' => 'Nothing was found with symbol '. $request->search]);
         }
     }
 

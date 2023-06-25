@@ -5,10 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TransferRequest;
 use App\Models\Account;
 use App\Models\Transaction;
-use App\Models\User;
 use App\Repositories\CurrencyRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Redirect;
 
@@ -25,13 +25,65 @@ class TransactionController extends Controller
     {
         $accounts = auth()->user()->accounts()->get();
 
-        $transactions = Transaction::with(['accountTo', 'accountFrom'])
-            ->whereIn('account_from_id', $accounts->pluck('id'))
-            ->orWhereIn('account_to_id', $accounts->pluck('id'))
-            ->get();
-
         return view('transactions.index', [
             'accounts' => $accounts,
+        ]);
+    }
+
+    public function show(Request $request)
+    {
+
+        /** @var Account $account */
+        $account = auth()->user()->accounts()->where('id', $request->account)->first();
+
+        $transactions = $account->transactions()->get();
+
+        return view('transactions.show', [
+            'account' => $account,
+            'transactions' => $transactions,
+        ]);
+    }
+
+    public function filter(Request $request)
+    {
+        $account = auth()->user()->accounts()->where('id', $request->account)->first();
+
+        /*$transactions = $account->transactions()
+            ->dateRange($request->from, $request->to)
+            ->get();*/
+
+        $transactions = Transaction::with(['accountTo', 'accountFrom'])
+            ->where(function ($query) use ($request) {
+                $query->whereHas('accountTo.user', function ($query) use ($request) {
+                    $query->where('name', 'like', '%'.$request->search.'%');
+                })->orWhereHas('accountFrom.user', function ($query) use ($request) {
+                    $query->where('name', 'like', '%'.$request->search.'%');
+                })->
+                orWhereHas('accountFrom.user', function ($query) use ($request) {
+                    $query->where('name', 'like', '%'.$request->search.'%');
+                })->
+                orWhereHas('accountFrom.user', function ($query) use ($request) {
+                    $query->where('name', 'like', '%'.$request->search.'%');
+                });
+            })
+            ->whereDate('created_at', '>=', $request->from)
+            ->whereDate('created_at', '<=', $request->to)
+            ->get();
+
+        /*$transactionsOut = $account->transactionsOut()
+            ->whereDate('created_at', '>=', $request->from)
+            ->whereDate('created_at', '<=', $request->to)
+            ->get();
+
+        $transactionsIn = $account->transactionsIn()
+            ->whereDate('created_at', '>=', $request->from)
+            ->whereDate('created_at', '<=', $request->to)
+            ->get();
+
+        $transactions = $transactionsIn->merge($transactionsOut);*/
+
+        return view('transactions.show', [
+            'account' => $account,
             'transactions' => $transactions,
         ]);
     }
@@ -74,10 +126,10 @@ class TransactionController extends Controller
     private function saveTransaction(
         Account $from,
         Account $to,
-        float $amount,
-        float $amountConverted,
-        float $exchangeRate
-    ):void
+        float   $amount,
+        float   $amountConverted,
+        float   $exchangeRate
+    ): void
     {
         $transaction = (new Transaction())->fill([
             'account_from_id' => $from->id,

@@ -22,14 +22,10 @@ class Account extends Model
         return $this->hasMany(CryptoTransaction::class, 'account_id');
     }
 
-    public function transactionsOut(): HasMany
+    public function transactions(): HasMany
     {
-        return $this->hasMany(Transaction::class, 'account_from_id' );
-    }
-
-    public function transactionsIn(): HasMany
-    {
-        return $this->hasMany(Transaction::class, 'account_to_id' );
+        return $this->hasMany(Transaction::class, 'account_from_id')
+            ->orWhere('account_to_id', $this->getKey());
     }
 
     public function deposit(float $amount): void

@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/transactions', [TransactionController::class, 'transfer'])->name('transactions.transfer');
+    Route::post('/transactions/history', [TransactionController::class, 'show'])->name('transactions.history');
+    Route::post('/transactions/filter', [TransactionController::class, 'filter'])->name('transactions.filter');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
 });
