@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -53,7 +53,7 @@ class TransactionController extends Controller
 
         $account = auth()->user()->accounts()->where('id', $request->account)->first();
 
-        $transactions = Transaction::with(['accountTo', 'accountFrom'])
+        $transactions = $account->transactions()->with(['accountTo', 'accountFrom'])
             ->where(function ($query) use ($request) {
                 $searchTerm = '%' . $request->search . '%';
 
@@ -97,18 +97,18 @@ class TransactionController extends Controller
 
         $request->validated();
 
-        $converted = $this->convert($accountFrom->currency, $accountTo->currency, $request->amount);
+        $converted = $this->convert($accountFrom->currency, $accountTo->currency, (float)$request->amount);
 
         $convertedAmount = $converted['convertedAmount'];
         $exchangeRate = $converted['exchangeRate'];
 
-        $accountFrom->withdraw($request->amount);
+        $accountFrom->withdraw((float) $request->amount);
         $accountTo->deposit($convertedAmount);
 
         $this->saveTransaction(
             $accountFrom,
             $accountTo,
-            $request->amount,
+            (float) $request->amount,
             $convertedAmount,
             $exchangeRate
         );
@@ -125,7 +125,7 @@ class TransactionController extends Controller
         float   $exchangeRate
     ): void
     {
-        $transaction = (new Transaction())->fill([
+        Transaction::create([
             'account_from_id' => $from->id,
             'account_to_id' => $to->id,
             'currency_from' => $from->currency,
@@ -134,11 +134,9 @@ class TransactionController extends Controller
             'amount_converted' => $amountConverted,
             'exchange_rate' => $exchangeRate
         ]);
-
-        $transaction->save();
     }
 
-    private function convert(string $from, string $to, int $amount): array
+    private function convert(string $from, string $to, float $amount): array
     {
         $currencies = $this->currencyRepository->all();
 

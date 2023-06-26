@@ -7,21 +7,21 @@
         <x-flash>{{$message}}</x-flash>
     @endif
 
-    <div class="mt-2 mb-4 bg-white p-5 rounded-xl">
+    <div class="mt-2 mb-4 bg-white px-10 py-4 rounded-xl">
         <div>
-            <h1 class="text-2xl font-bold">Transaction overview</h1>
+            <h1 class="text-2xl font-bold">Transaction overview for <span class="italic">{{$account->name}}</span></h1>
         </div>
 
-        <div class="mt-6">
-            <div class="mt-1 text-xl text-gray-600">
-                <div>{{$account->number}}</div>
-                <div>BALANCE: {{ number_format($account->balance, 2) }} {{$account->currency}}</div>
+        <div class="mt-2">
+            <div class="mt-1 text-gray-600">
+                <div class="mb-4 text-sm">{{$account->number}}</div>
+                <div class="mb-4 text-xl">Total balance: {{ number_format($account->balance, 2) }} {{$account->currency}}</div>
             </div>
             <div class="flex mt-8">
                 <form class="items-center" method="get" action="{{route('transactions.filter')}}">
                     @csrf
-                    <div class="flex flex-wrap mx-3 mb-4">
-                        <div class="px-3 mb-4">
+                    <div class="flex flex-wrap mb-4">
+                        <div class="">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="from">
                                 From Date
                             </label>
@@ -30,7 +30,7 @@
                                 id="from" name="from" type="date" placeholder="Select from date"
                                 value="{{$from ?? null}}">
                         </div>
-                        <div class="px-3 mb-4">
+                        <div class="px-3">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="to">
                                 To Date
                             </label>
@@ -38,7 +38,7 @@
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="to" name="to" value="{{$to ?? null}}" type="date" placeholder="Select to date">
                         </div>
-                        <div class="px-3 mb-4">
+                        <div class="px-3">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="search">
                                 Search
                             </label>
@@ -47,7 +47,7 @@
                                 id="search" name="search" type="text" placeholder="Search transaction"
                                 value="{{$search ?? null}}">
                         </div>
-                        <div class="px-3 mb-4 pt-7">
+                        <div class="px-3 pt-7">
                             <label>
                                 <input hidden name="account" value="{{$account->id}}"/>
                             </label>

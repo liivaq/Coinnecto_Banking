@@ -1,14 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CryptoTransactionRequest;
+use App\Http\Requests\Crypto\CryptoBuyRequest;
+use App\Http\Requests\Crypto\CryptoSellRequest;
 use App\Models\Account;
 use App\Models\CryptoCoin;
 use App\Models\CryptoTransaction;
 use App\Repositories\CoinMarketCapRepository;
-use App\Rules\MaxCryptoPrice;
-use App\Rules\Otp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -32,7 +31,6 @@ class CryptoTransactionController extends Controller
         $ids = $transactions->pluck('cmc_id')->all();
         $cryptos = $this->cryptoRepository->findMultipleById($ids);
 
-
         return view('crypto.transactions', [
             'accounts' => $accounts,
             'transactions' => $transactions,
@@ -40,17 +38,10 @@ class CryptoTransactionController extends Controller
         ]);
     }
 
-    public function buy(CryptoTransactionRequest $request)
+    public function buy(CryptoBuyRequest $request)
     {
         /** @var Account $account */
         $account = Account::where('number', $request->account)->firstOrFail();
-
-      /*  $request->validate([
-            'account' => ['required', 'exists:accounts,number'],
-            'amount' => ['required', 'numeric', 'min:0.01'],
-            'price' => [new MaxCryptoPrice($request->amount, $account->balance)],
-            'one_time_password' => ['required', new Otp()]
-        ]);*/
 
         $request->validated();
 
@@ -66,15 +57,9 @@ class CryptoTransactionController extends Controller
         return Redirect::to(route('crypto.portfolio'))->with('success', 'Purchase Successful!');
     }
 
-    public function sell(Request $request)
+    public function sell(CryptoSellRequest $request)
     {
-        $userCrypto = auth()->user()->cryptos()->where('cmc_id', $request->crypto_coin)->first();
-
-        $request->validate([
-            'account' => ['required', 'exists:accounts,number'],
-            'amount' => ['required', 'numeric', 'min:0.01', 'max:' . $userCrypto->amount],
-            /*'one_time_password' => ['required', new Otp()]*/
-        ]);
+        $request->validated();
 
         $cryptoCoin = $this->cryptoRepository->findById($request->crypto_coin);
 

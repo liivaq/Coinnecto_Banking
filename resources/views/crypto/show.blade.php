@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <x-slot name="header">
-            Trade {{$crypto->getName()}}
+            Trade {{$crypto->name}}
         </x-slot>
     </x-slot>
 
@@ -9,11 +9,11 @@
         <div class="bg-white shadow sm:rounded-lg">
             <div class="flex items-center p-4 sm:p-8">
                 <div class="flex-none pr-4">
-                    <img class="w-16 h-auto" src="{{$crypto->getIconUrl()}}" alt="{{$crypto->getName()}}">
+                    <img class="w-16 h-auto" src="{{$crypto->iconUrl}}" alt="{{$crypto->name}}">
                 </div>
                 <div class="flex-1">
-                    <h2 class="text-xl font-bold">{{$crypto->getName()}}</h2>
-                    <p class="text-gray-500">{{$crypto->getSymbol()}}</p>
+                    <h2 class="text-xl font-bold">{{$crypto->name}}</h2>
+                    <p class="text-gray-500">{{$crypto->symbol}}</p>
                 </div>
 
                 <div class="flex-1">
@@ -23,24 +23,24 @@
 
                 <div class="flex-1">
                     <p class="font-bold">Price (€)</p>
-                    <p>{{$crypto->getPrice()}}</p>
+                    <p>{{$crypto->price}}</p>
                 </div>
                 <div class="flex-1">
                     <p class="font-bold">Change 1h (%)</p>
-                    @if($crypto->getPercentChange1h() > 0)
-                        <p class="text-green-500">{{$crypto->getPercentChange1h()}}</p>
+                    @if($crypto->percentChange1h > 0)
+                        <p class="text-green-500">{{$crypto->percentChange1h}}</p>
                     @endif
-                    @if($crypto->getPercentChange1h() < 0)
-                        <p class="text-red-500">{{$crypto->getPercentChange1h()}}</p>
+                    @if($crypto->percentChange1h < 0)
+                        <p class="text-red-500">{{$crypto->percentChange1h}}</p>
                     @endif
                 </div>
                 <div class="flex-1">
                     <p class="font-bold">Change 24h (%)</p>
-                    @if($crypto->getPercentChange24h() > 0)
-                        <p class="text-green-500">{{$crypto->getPercentChange24h()}}</p>
+                    @if($crypto->percentChange24h > 0)
+                        <p class="text-green-500">{{$crypto->percentChange24h}}</p>
                     @endif
-                    @if($crypto->getPercentChange24h() < 0)
-                        <p class="text-red-500">{{$crypto->getPercentChange24h()}}</p>
+                    @if($crypto->percentChange24h < 0)
+                        <p class="text-red-500">{{$crypto->percentChange24h}}</p>
                     @endif
                 </div>
             </div>
@@ -61,11 +61,11 @@
                 </div>
             @else
                 <h2 class="text-lg font-medium text-gray-900">
-                    Trade {{$crypto->getName()}}
+                    Trade {{$crypto->name}}
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    Buy and sell your {{$crypto->getName()}}
+                    Buy and sell your {{$crypto->name}}
                 </p>
                 <form method="post" action="{{ route('crypto.buy') }}" class="mt-6 space-y-6" autocomplete="off">
                     @csrf
@@ -82,15 +82,14 @@
                         </x-selection-input>
                     </div>
 
-                    <div x-data="{ price: 0}">
-
-                        <input type="hidden" name="crypto_coin" value="{{$crypto->getId()}}"/>
+                    <div x-data="{ price: {{ old('amount', 0) }} }">
+                        <input type="hidden" name="crypto_coin" value="{{$crypto->id}}"/>
 
                         <x-input-label for="amount" value="Amount"/>
                         <x-text-input id="amount" name="amount" type="number" step="0.01" class="mt-1 block w-full"
                                       :value="old('amount')" x-model="price"/>
 
-                        <input type="hidden" id="price" name="price" value="{{$crypto->getPrice()}}">
+                        <input type="hidden" id="price" name="price" value="{{$crypto->price}}">
 
                         @error('amount')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -100,10 +99,8 @@
                         @enderror
 
                         <div class="mt-6">
-                            <p class="text-s text-gray-700">Total price: <span x-text="price * {{$crypto->getPrice()}}"> </span> €<p>
+                            <p class="text-s text-gray-700">Total price: <span x-text="price * {{$crypto->price}}"> </span> €</p>
                         </div>
-
-
                     </div>
 
                     <div>

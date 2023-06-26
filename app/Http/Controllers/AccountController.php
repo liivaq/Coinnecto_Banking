@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -36,18 +36,17 @@ class AccountController extends Controller
     {
         $request->validate([
             'name' => ['required', 'min:3'],
-            'currency' => ['required']
+            'currency' => ['required'],
+            'type' => ['required']
         ]);
 
-        $account = (new Account)->fill([
+        Account::create([
+            'user_id' => auth()->user()->getAuthIdentifier(),
             'name' => $request->name,
             'currency' => $request->currency,
             'number' => $this->generateAccountNumber($request->currency),
             'type' => $request->type
         ]);
-
-        $account->user()->associate(auth()->user());
-        $account->save();
 
         return Redirect::to('/accounts')->with('success', 'Account created Successfully!');
 

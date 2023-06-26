@@ -32,20 +32,23 @@
                         <h2 class="font-bold mb-4">Accounts</h2>
                     </div>
                 </div>
-                <div class="flex-grow flex justify-center mb-4 mt-10">
+                <div class="flex-grow m-6">
                     <ul class="">
                         <li class="text-2xl font-semibold">{{$account->name}}</li>
                         <li class="text-xl text-gray-600">{{$account->number}}</li>
-                        <li class="mt-8 flex text-2xl">
+                        <li class="mt-6 flex text-2xl">
                             Balance:  <span class="font-semibold ml-4">
                                 {{number_format($account->balance, 2)}} {{$account->currency}}
                             </span>
                         </li>
                     </ul>
                 </div>
-                <div class="mt-auto flex justify-end">
+                <div class="mt-auto flex justify-end gap-x-4">
                     <a href="{{route('accounts.index')}}">
                         <x-secondary-button>View all Accounts</x-secondary-button>
+                    </a>
+                    <a href="{{route('accounts.create')}}">
+                        <x-secondary-button>Open a new Account</x-secondary-button>
                     </a>
                 </div>
             </div>

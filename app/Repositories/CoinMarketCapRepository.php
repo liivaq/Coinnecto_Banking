@@ -46,7 +46,7 @@ class CoinMarketCapRepository
 
     }
 
-    public function findById(int $id): CryptoCoin
+    public function findById(string $id): CryptoCoin
     {
         $response = $this->client->get('v1/cryptocurrency/quotes/latest',
             [
@@ -126,13 +126,15 @@ class CoinMarketCapRepository
     private function buildModel(\stdClass $coin): CryptoCoin
     {
         return new CryptoCoin(
-            $coin->id,
-            $coin->name,
-            $coin->symbol,
-            $coin->quote->EUR->price,
-            'https://coinicons-api.vercel.app/api/icon/' . strtolower($coin->symbol),
-            $coin->quote->EUR->percent_change_1h,
-            $coin->quote->EUR->percent_change_24h,
+            [
+                'id' => $coin->id,
+                'name' => $coin->name,
+                'symbol' => $coin->symbol,
+                'price' => $coin->quote->EUR->price,
+                'iconUrl' => 'https://coinicons-api.vercel.app/api/icon/' . strtolower($coin->symbol),
+                'percentChange1h' => $coin->quote->EUR->percent_change_1h,
+                'percentChange24h' => $coin->quote->EUR->percent_change_24h
+            ]
         );
     }
 }

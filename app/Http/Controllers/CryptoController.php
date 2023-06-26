@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
@@ -50,12 +50,15 @@ class CryptoController extends Controller
     public function search(Request $request)
     {
         try {
+            $request->validate([
+                'search' => ['required']
+            ]);
             $crypto = $this->cryptoRepository->findBySymbol($request->search);
             return view('crypto.search', [
                 'cryptoCollection' => [$crypto]
             ]);
         } catch (Exception $exception) {
-            return Redirect::back()->withErrors(['error' => 'Nothing was found with symbol '. $request->search]);
+            return Redirect::back()->withErrors(['error' => 'Nothing was found. Provide a valid symbol']);
         }
     }
 

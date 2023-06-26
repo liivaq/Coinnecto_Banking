@@ -4,27 +4,27 @@
     </x-slot>
 
     <div class="flex pb-6">
-        <form class="relative" action="{{route('crypto.search')}}">
+        <form class="flex w-1/2" action="{{route('crypto.search')}}">
             @csrf
             <x-text-input
+                class="w-full mr-2"
                 name="search"
                 type="text"
-                placeholder="Search"
+                placeholder="Search by symbol"
             ></x-text-input>
             <x-primary-button
                 type="submit"
             >
-                Search by Symbol
+                Search
             </x-primary-button>
         </form>
         @if($errors->any())
             <div class="bg-rose-400 py-2 px-2 ml-2 text-white rounded-xl">{{$errors->first()}}</div>
         @endif
-
     </div>
     <div class="bg-white shadow-md rounded-md">
         <div class="overflow-x-auto">
-            <div class="min-w-screen min-h-screen flex items-center justify-center">
+            <div class="min-w-screen min-h-screen flex  justify-center">
                 <div class="w-full">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
@@ -57,8 +57,8 @@
                                     <div class="flex items-center">
                                         <div class="ml-4">
                                             <div class="text-sm leading-5 font-medium text-gray-900">
-                                                <img class=" w-8" src="{{$crypto->getIconUrl()}}"
-                                                     alt="{{$crypto->getSymbol()}}"/>
+                                                <img class=" w-8" src="{{$crypto->iconUrl}}"
+                                                     alt="{{$crypto->symbol}}"/>
                                             </div>
                                         </div>
                                     </div>
@@ -67,47 +67,47 @@
                                     <div class="flex items-center">
                                         <div class="ml-4">
                                             <div
-                                                class="text-sm leading-5 font-medium text-gray-900">{{$crypto->getName()}}</div>
+                                                class="text-sm leading-5 font-medium text-gray-900">{{$crypto->name}}</div>
                                         </div>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap">
-                                    <div class="text-sm leading-5 text-gray-900">{{$crypto->getSymbol()}}</div>
+                                    <div class="text-sm leading-5 text-gray-900">{{$crypto->symbol}}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-no-wrap">
-                                    <div class="text-sm leading-5 text-gray-900">{{$crypto->getPrice()}}</div>
+                                    <div class="text-sm leading-5 text-gray-900">{{$crypto->price}}</div>
                                 </td>
 
-                                @if($crypto->getPercentChange1h() > 0)
+                                @if($crypto->percentChange1h > 0)
                                     <td class="px-6 py-4 whitespace-no-wrap">
                                         <div class="text-sm leading-5 text-green-500">
-                                            +{{$crypto->getPercentChange1h()}}</div>
+                                            +{{$crypto->percentChange1h}}</div>
                                     </td>
                                 @endif
 
-                                @if($crypto->getPercentChange1h() < 0)
+                                @if($crypto->percentChange1h < 0)
                                     <td class="px-6 py-4 whitespace-no-wrap">
                                         <div
-                                            class="text-sm leading-5 text-red-500">{{$crypto->getPercentChange1h()}}</div>
+                                            class="text-sm leading-5 text-red-500">{{$crypto->percentChange1h}}</div>
                                     </td>
                                 @endif
 
-                                @if($crypto->getPercentChange24h() > 0)
+                                @if($crypto->percentChange24h > 0)
                                     <td class="px-6 py-4 whitespace-no-wrap">
                                         <div class="text-sm leading-5 text-green-500">
-                                            +{{$crypto->getPercentChange24h()}}</div>
+                                            +{{$crypto->percentChange24h}}</div>
                                     </td>
                                 @endif
 
-                                @if($crypto->getPercentChange24h() < 0)
+                                @if($crypto->percentChange24h < 0)
                                     <td class="px-6 py-4 whitespace-no-wrap">
                                         <div
-                                            class="text-sm leading-5 text-red-500">{{$crypto->getPercentChange24h()}}</div>
+                                            class="text-sm leading-5 text-red-500">{{$crypto->percentChange24h}}</div>
                                     </td>
                                 @endif
 
                                 <td class="px-6 py-4 whitespace-no-wrap">
-                                    <a href="{{ url('crypto/'.$crypto->getId()) }}">
+                                    <a href="{{ url('crypto/'.$crypto->id) }}">
                                         <x-secondary-button>Trade</x-secondary-button>
                                     </a>
                                 </td>

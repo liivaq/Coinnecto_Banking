@@ -2,9 +2,21 @@
 
 namespace App\Models;
 
-class CryptoCoin
+use Illuminate\Database\Eloquent\Model;
+
+class CryptoCoin extends Model
 {
-    private int $id;
+    protected $connection = 'null';
+    protected $fillable = [
+        'id',
+        'name',
+        'symbol',
+        'price',
+        'iconUrl',
+        'percentChange1h',
+        'percentChange24h'
+    ];
+   /* private int $id;
     private string $name;
     private string $symbol;
     private float $price;
@@ -65,6 +77,6 @@ class CryptoCoin
     public function getIconUrl(): string
     {
         return $this->iconUrl;
-    }
+    }*/
 
 }
