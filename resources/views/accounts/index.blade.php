@@ -1,16 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Accounts') }}
-        </h2>
+        Your Accounts
     </x-slot>
 
     @if ($message = Session::get('success'))
         <x-flash>{{$message}}</x-flash>
     @endif
 
-    <div class="flex gap-x-5 mt-2 mb-6 bg-white p-5 rounded-xl justify-between">
-        <div>
+    <div class="gap-x-5 mt-2 mb-6 bg-white p-5 rounded-xl">
+        <div class="mb-4">
             <h1 class="text-2xl font-bold">Account Overview</h1>
         </div>
 
@@ -37,6 +35,11 @@
                     <div
                         class="mr-6">{{ number_format($account->balance, 2) }} {{strtoupper($account->currency)}}</div>
                     <div>
+                        <a href="{{ route('transactions.history', ['account' => $account->id]) }}">
+                            <x-secondary-button>
+                                Transaction History
+                            </x-secondary-button>
+                        </a>
                         <a href="#">
                             <x-primary-button type="button">
                                 Deposit

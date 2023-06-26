@@ -4,7 +4,7 @@ namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 
-class MaxPrice implements Rule
+class MaxCryptoPrice implements Rule
 {
 
     private float $amount;

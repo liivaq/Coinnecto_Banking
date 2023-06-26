@@ -22,9 +22,6 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden sm:-my-px sm:flex text-white">
-                    {{--<x-nav-link :href="route('transactions.index')" :active="request()->routeIs('transactions.index')">
-                        {{ __('Transactions') }}
-                    </x-nav-link>--}}
                     <div class="hidden sm:flex sm:items-center sm:ml-6">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
@@ -56,9 +53,6 @@
                     </div>
                 </div>
                 <div class="hidden sm:-my-px sm:flex text-white">
-                   {{-- <x-nav-link :href="route('crypto.index')" :active="request()->routeIs('crypto.index')">
-                        {{ __('Crypto') }}
-                    </x-nav-link>--}}
                     <div class="hidden sm:flex sm:items-center sm:ml-6">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">

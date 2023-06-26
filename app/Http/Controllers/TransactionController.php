@@ -32,11 +32,13 @@ class TransactionController extends Controller
 
     public function show(Request $request)
     {
-
         /** @var Account $account */
         $account = auth()->user()->accounts()->where('id', $request->account)->first();
 
-        $transactions = $account->transactions()->get();
+        $transactions = $account
+            ->transactions()
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
 
         return view('transactions.show', [
             'account' => $account,
@@ -46,43 +48,35 @@ class TransactionController extends Controller
 
     public function filter(Request $request)
     {
-        $account = auth()->user()->accounts()->where('id', $request->account)->first();
+        $from = $request->from ?? now()->toDateString();
+        $to = $request->to ?? now()->toDateString();
 
-        /*$transactions = $account->transactions()
-            ->dateRange($request->from, $request->to)
-            ->get();*/
+        $account = auth()->user()->accounts()->where('id', $request->account)->first();
 
         $transactions = Transaction::with(['accountTo', 'accountFrom'])
             ->where(function ($query) use ($request) {
-                $query->whereHas('accountTo.user', function ($query) use ($request) {
-                    $query->where('name', 'like', '%'.$request->search.'%');
-                })->orWhereHas('accountFrom.user', function ($query) use ($request) {
-                    $query->where('name', 'like', '%'.$request->search.'%');
-                })->
-                orWhereHas('accountFrom.user', function ($query) use ($request) {
-                    $query->where('name', 'like', '%'.$request->search.'%');
-                })->
-                orWhereHas('accountFrom.user', function ($query) use ($request) {
-                    $query->where('name', 'like', '%'.$request->search.'%');
+                $searchTerm = '%' . $request->search . '%';
+
+                $query->where(function ($query) use ($searchTerm) {
+                    $query->whereHas('accountTo', function ($query) use ($searchTerm) {
+                        $query->where('number', 'like', $searchTerm);
+                    })->orWhereHas('accountFrom', function ($query) use ($searchTerm) {
+                        $query->where('number', 'like', $searchTerm);
+                    });
+                })->orWhereHas('accountFrom.user', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', $searchTerm);
+                })->orWhereHas('accountTo.user', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', $searchTerm);
                 });
             })
-            ->whereDate('created_at', '>=', $request->from)
-            ->whereDate('created_at', '<=', $request->to)
-            ->get();
-
-        /*$transactionsOut = $account->transactionsOut()
-            ->whereDate('created_at', '>=', $request->from)
-            ->whereDate('created_at', '<=', $request->to)
-            ->get();
-
-        $transactionsIn = $account->transactionsIn()
-            ->whereDate('created_at', '>=', $request->from)
-            ->whereDate('created_at', '<=', $request->to)
-            ->get();
-
-        $transactions = $transactionsIn->merge($transactionsOut);*/
+            ->whereDate('created_at', '>=', $from)
+            ->whereDate('created_at', '<=', $to)
+            ->paginate(3);
 
         return view('transactions.show', [
+            'search' => $request->search,
+            'from' => $from,
+            'to' => $to,
             'account' => $account,
             'transactions' => $transactions,
         ]);
@@ -119,7 +113,7 @@ class TransactionController extends Controller
             $exchangeRate
         );
 
-        return Redirect::to(route('transactions.index'))->with('success', 'Transaction successful!');
+        return Redirect::to(route('transactions.history', ['account' => $accountFrom->id]))->with('success', 'Transaction successful!');
 
     }
 

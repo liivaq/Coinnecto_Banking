@@ -1,4 +1,7 @@
 <x-app-layout>
+    <x-slot name="header">
+        Crypto Transaction History
+    </x-slot>
     <div class="bg-white shadow-md rounded my-6">
         <table class="min-w-full leading-normal">
             <thead>

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CryptoTransactionRequest;
 use App\Models\Account;
 use App\Models\CryptoCoin;
 use App\Models\CryptoTransaction;
 use App\Repositories\CoinMarketCapRepository;
-use App\Rules\MaxPrice;
+use App\Rules\MaxCryptoPrice;
+use App\Rules\Otp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 
@@ -38,17 +40,19 @@ class CryptoTransactionController extends Controller
         ]);
     }
 
-    public function buy(Request $request)
+    public function buy(CryptoTransactionRequest $request)
     {
         /** @var Account $account */
         $account = Account::where('number', $request->account)->firstOrFail();
 
-        $request->validate([
+      /*  $request->validate([
             'account' => ['required', 'exists:accounts,number'],
             'amount' => ['required', 'numeric', 'min:0.01'],
-            'price' => [new MaxPrice($request->amount, $account->balance)]
-            /*'one_time_password' => ['required', new Otp()]*/
-        ]);
+            'price' => [new MaxCryptoPrice($request->amount, $account->balance)],
+            'one_time_password' => ['required', new Otp()]
+        ]);*/
+
+        $request->validated();
 
         $crypto = $this->cryptoRepository->findById($request->crypto_coin);
 

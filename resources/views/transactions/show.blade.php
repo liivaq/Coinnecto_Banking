@@ -1,8 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Transaction Overview') }}
-        </h2>
+         Transaction Overview
     </x-slot>
 
     @if ($message = Session::get('success'))
@@ -15,44 +13,45 @@
         </div>
 
         <div class="mt-6">
-            <div class="mt-1 text-md text-gray-600">
-                {{$account->name}} {{$account->number}}
-                BALANCE: {{number_format($account->balance),2}} {{$account->currency}}
+            <div class="mt-1 text-xl text-gray-600">
+                <div>{{$account->number}}</div>
+                <div>BALANCE: {{ number_format($account->balance, 2) }} {{$account->currency}}</div>
             </div>
             <div class="flex mt-8">
-                <form class="items-center" method="POST" action="{{route('transactions.filter')}}">
+                <form class="items-center" method="get" action="{{route('transactions.filter')}}">
                     @csrf
                     <div class="flex flex-wrap mx-3 mb-4">
-                        <div class="w-full md:w-1/4 px-3 mb-4">
+                        <div class="px-3 mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="from">
                                 From Date
                             </label>
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="from" name="from" type="date" placeholder="Select from date">
+                                id="from" name="from" type="date" placeholder="Select from date"
+                                value="{{$from ?? null}}">
                         </div>
-                        <div class="w-full md:w-1/4 px-3 mb-4">
+                        <div class="px-3 mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="to">
                                 To Date
                             </label>
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="to" name="to" type="date" placeholder="Select to date">
+                                id="to" name="to" value="{{$to ?? null}}" type="date" placeholder="Select to date">
                         </div>
-                        <div class="w-full md:w-1/4 px-3 mb-4">
+                        <div class="px-3 mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="search">
                                 Search
                             </label>
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="search" name="search" type="text" placeholder="Search transaction">
+                                id="search" name="search" type="text" placeholder="Search transaction"
+                                value="{{$search ?? null}}">
                         </div>
-                        <div class="w-full md:w-1/4 px-3 mb-4 pt-7">
+                        <div class="px-3 mb-4 pt-7">
                             <label>
                                 <input hidden name="account" value="{{$account->id}}"/>
                             </label>
                             <x-primary-button>Search</x-primary-button>
-                            <x-secondary-button>Reset</x-secondary-button>
                         </div>
                     </div>
                 </form>
@@ -144,71 +143,13 @@
                     </tr>
                 @endif
             @endforeach
-            <!-- Add more rows as needed -->
             </tbody>
         </table>
-    </div>
 
-    {{--
-        <div
-            class="min-w-full shadow-lg overflow-hidden bg-white px-8 pt-3 rounded-lg">
-            @foreach($accounts as $account)
-                <div class="p-4 sm:p-8 bg-white rounded-lg">
-                    <div class="max-w-2xl">
-                        <p class="text-xl font-bold mb-5">{{$account->name}}
-                            <span class="text-gray-500 text-sm">{{$account->number}}</span></p>
-
-                        <ul>
-                            @foreach ($transactions as $transaction)
-                                @if($transaction->accountFrom->id === $account->id || $transaction->accountTo->id === $account->id )
-                                    <li class="flex items center space-x-4 py-1 border-b border-gray-300 mb-2">
-                                        <div class="flex-1">
-                                            <div class="flex-col text-gray-700 font-bold">
-                                                @if($transaction->accountTo->id === $account->id )
-                                                    <div>
-                                                        From {{ $transaction->accountFrom->user->name}}
-                                                    </div>
-                                                    <div class="text-gray-500 text-sm">
-                                                        {{ $transaction->accountFrom->number }}
-                                                    </div>
-                                                @endif
-
-                                                @if($transaction->accountTo->id !== $account->id )
-                                                    <div>
-                                                        To {{ $transaction->accountTo->user->name}}
-                                                    </div>
-
-                                                    <div class="text-gray-500 text-sm">
-                                                        {{ $transaction->accountTo->number }}
-                                                    </div>
-                                                @endif
-
-                                            </div>
-
-                                            <div class="text-gray-500 text-sm">
-                                                {{ $transaction->created_at->format('d/m/Y H:i') }}
-                                            </div>
-                                        </div>
-                                        @if($transaction->accountTo->id === $account->id )
-                                            <div class="text-green-600 font-bold">
-                                                +{{number_format($transaction->amount_converted, 2)}} {{ $account->currency }}
-                                            </div>
-                                        @endif
-
-                                        @if($transaction->accountFrom->id === $account->id )
-                                            <div class="text-red-600 font-bold">
-                                                -{{number_format($transaction->amount, 2)}} {{ $account->currency }}
-                                            </div>
-                                        @endif
-                                    </li>
-                                @endif
-
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
-            @endforeach
+        <div class="">
+            {{ $transactions->appends(['account' => $account->id, 'from' => $from ?? null, 'to' => $to ?? null,'search'=> $search ?? null])->links() }}
         </div>
-    --}}
+
+    </div>
 
 </x-app-layout>

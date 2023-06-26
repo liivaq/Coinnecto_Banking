@@ -1,4 +1,7 @@
 <x-app-layout>
+    <x-slot name="header">
+        Crypto Portfolio
+    </x-slot>
 
     @if ($message = Session::get('success'))
         <x-flash>{{$message}}</x-flash>

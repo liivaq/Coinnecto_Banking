@@ -20,6 +20,7 @@
 
 
         <div x-cloak class="flex mt-6 gap-x-4">
+
             <x-secondary-button x-on:click="secretOpen = !secretOpen">Show Key</x-secondary-button>
             <x-second-modal>
                 <x-slot name="title">

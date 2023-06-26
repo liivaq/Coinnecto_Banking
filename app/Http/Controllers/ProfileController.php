@@ -11,10 +11,15 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-
     public function dashboard()
     {
-        return view('dashboard');
+        $account = auth()->user()->accounts()->first();
+        $transactions = $account->transactions()->latest()->take(3)->get();
+
+        return view('dashboard', [
+            'account' => $account,
+            'transactions' => $transactions
+        ]);
     }
 
     public function edit(Request $request): View

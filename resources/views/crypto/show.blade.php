@@ -1,8 +1,8 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Crypto') }}
-        </h2>
+        <x-slot name="header">
+            Trade {{$crypto->getName()}}
+        </x-slot>
     </x-slot>
 
     <div class="pb-4">
@@ -87,7 +87,7 @@
                         <input type="hidden" name="crypto_coin" value="{{$crypto->getId()}}"/>
 
                         <x-input-label for="amount" value="Amount"/>
-                        <x-text-input id="amount" name="amount" type="number" class="mt-1 block w-full"
+                        <x-text-input id="amount" name="amount" type="number" step="0.01" class="mt-1 block w-full"
                                       :value="old('amount')" x-model="price"/>
 
                         <input type="hidden" id="price" name="price" value="{{$crypto->getPrice()}}">
@@ -100,7 +100,7 @@
                         @enderror
 
                         <div class="mt-6">
-                            <p class="text-s text-gray-700">Total price: <span x-text="price * {{number_format($crypto->getPrice(), 4)}}"> </span> €<p>
+                            <p class="text-s text-gray-700">Total price: <span x-text="price * {{$crypto->getPrice()}}"> </span> €<p>
                         </div>
 
 
@@ -124,7 +124,7 @@
                         @enderror
                     </div>
 
-                    <div x-data="{ hasCryptos: true }" x-init="hasCryptos = {{ isset($userCrypto->amount) && $userCrypto->amount > 0  ? 'true' : 'false' }}">
+                    <div x-cloak x-data="{ hasCryptos: true }" x-init="hasCryptos = {{ isset($userCrypto->amount) && $userCrypto->amount > 0  ? 'true' : 'false' }}">
                         <x-primary-button name="type" value="buy">Buy</x-primary-button>
                         <x-primary-button x-bind:disabled="!hasCryptos"
                                           x-bind:class="{ 'opacity-50 cursor-not-allowed': !hasCryptos }"
