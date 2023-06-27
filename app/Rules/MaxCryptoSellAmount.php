@@ -23,6 +23,6 @@ class MaxCryptoSellAmount implements Rule
 
     public function message()
     {
-        return 'You do not have '.$this->amount .' coins to sell';
+        return 'You only have '.$this->amount .' coins to sell';
     }
 }

@@ -46,7 +46,7 @@ class CoinMarketCapRepository
 
     }
 
-    public function findById(string $id): CryptoCoin
+    public function findById(string $id, string $currency = 'EUR'): CryptoCoin
     {
         $response = $this->client->get('v1/cryptocurrency/quotes/latest',
             [
@@ -56,14 +56,14 @@ class CoinMarketCapRepository
                 ],
                 'query' => [
                     'id' => $id,
-                    'convert' => 'EUR'
+                    'convert' => $currency
                 ]
             ]
         );
 
         $coin = json_decode($response->getBody()->getContents())->data->{$id};
 
-        return $this->buildModel($coin);
+        return $this->buildModel($coin, $currency);
     }
 
     public function findBySymbol(string $symbol): CryptoCoin
@@ -115,25 +115,24 @@ class CoinMarketCapRepository
         $cryptoCollection = [];
 
         foreach ($coins as $coin) {
-            $cryptoCollection[] = $this->buildModel($coin);
+            $cryptoCollection[$coin->id] = $this->buildModel($coin);
         }
 
         return $cryptoCollection;
 
     }
 
-
-    private function buildModel(\stdClass $coin): CryptoCoin
+    private function buildModel(\stdClass $coin, string $currency = 'EUR'): CryptoCoin
     {
         return new CryptoCoin(
             [
                 'id' => $coin->id,
                 'name' => $coin->name,
                 'symbol' => $coin->symbol,
-                'price' => $coin->quote->EUR->price,
+                'price' => $coin->quote->{$currency}->price,
                 'iconUrl' => 'https://coinicons-api.vercel.app/api/icon/' . strtolower($coin->symbol),
-                'percentChange1h' => $coin->quote->EUR->percent_change_1h,
-                'percentChange24h' => $coin->quote->EUR->percent_change_24h
+                'percentChange1h' => $coin->quote->{$currency}->percent_change_1h,
+                'percentChange24h' => $coin->quote->{$currency}->percent_change_24h
             ]
         );
     }

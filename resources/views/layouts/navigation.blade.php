@@ -79,6 +79,10 @@
                                 <x-dropdown-link :href="route('crypto.portfolio')">
                                     {{ __('Your Crypto Portfolio') }}
                                 </x-dropdown-link>
+
+                                <x-dropdown-link :href="route('crypto.transactions')">
+                                    {{ __('Transaction History') }}
+                                </x-dropdown-link>
                             </x-slot>
                         </x-dropdown>
                     </div>

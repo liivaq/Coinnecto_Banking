@@ -17,15 +17,20 @@ class Account extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function cryptoTransactions(): HasMany
-    {
-        return $this->hasMany(CryptoTransaction::class, 'account_id');
-    }
-
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'account_from_id')
             ->orWhere('account_to_id', $this->getKey());
+    }
+
+    public function userCryptos(): HasMany
+    {
+        return $this->hasMany(UserCrypto::class, 'account_id');
+    }
+
+    public function cryptoTransactions(): HasMany
+    {
+        return $this->hasMany(CryptoTransaction::class, 'account_id');
     }
 
     public function deposit(float $amount): void

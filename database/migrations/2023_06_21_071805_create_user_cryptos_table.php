@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create('user_cryptos', function (Blueprint $table) {
             $table->id();
             $table->integer('cmc_id');
+            $table->foreignId('account_id')->constrained();
             $table->foreignId('user_id')->constrained();
             $table->float('amount');
             $table->timestamps();

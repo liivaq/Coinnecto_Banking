@@ -17,7 +17,7 @@
                     @csrf
 
                     <div>
-                        <x-input-label for="name" value="Name"/>
+                        <x-input-label for="name" value="Account Name"/>
                         <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" placeholder="My USD account"/>
                         @error('name')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>

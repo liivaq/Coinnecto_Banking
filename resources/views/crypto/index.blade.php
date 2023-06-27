@@ -24,7 +24,7 @@
     </div>
     <div class="bg-white shadow-md rounded-md">
         <div class="overflow-x-auto">
-            <div class="min-w-screen min-h-screen flex  justify-center">
+            <div class="min-w-screen flex  justify-center">
                 <div class="w-full">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>

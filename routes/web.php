@@ -58,6 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/crypto/portfolio', [CryptoController::class, 'userCryptos'])->name('crypto.portfolio');
     Route::get('/crypto/search', [CryptoController::class, 'search'])->name('crypto.search');
     Route::get('/crypto/{id}', [CryptoController::class, 'show'])->name('crypto.show');
+    Route::post('/crypto/{id}', [CryptoController::class, 'changeValues'])->name('crypto.view');
 });
 
 require __DIR__.'/auth.php';

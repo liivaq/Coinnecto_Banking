@@ -34,11 +34,12 @@ class CryptoController extends Controller
         ]);
     }
 
+
     public function show($id)
     {
-        $crypto = $this->cryptoRepository->findById($id);
         $userCrypto = auth()->user()->cryptos()->where('cmc_id', $id)->first();
         $accounts = auth()->user()->accounts()->where('type', 'investment')->get();
+        $crypto = $this->cryptoRepository->findById($id, /*selected currency here*/);
 
         return view('crypto.show', [
             'crypto' => $crypto,
@@ -54,7 +55,7 @@ class CryptoController extends Controller
                 'search' => ['required']
             ]);
             $crypto = $this->cryptoRepository->findBySymbol($request->search);
-            return view('crypto.search', [
+            return view('crypto.index', [
                 'cryptoCollection' => [$crypto]
             ]);
         } catch (Exception $exception) {
@@ -64,17 +65,38 @@ class CryptoController extends Controller
 
     public function userCryptos()
     {
+        $accounts = auth()->user()
+            ->accounts()->where('type', 'investment')
+            ->with('userCryptos')
+            ->get();
+
         try {
             $cryptoIds = auth()->user()->cryptos()->pluck('cmc_id')->toArray();
-            $amounts = auth()->user()->cryptos()->pluck('amount', 'cmc_id');
-            $allUserCryptos = $this->cryptoRepository->findMultipleById($cryptoIds);
+            $cryptoInfo = $this->cryptoRepository->findMultipleById($cryptoIds);
         } catch (Exception $exception) {
-            $allUserCryptos = [];
+            $cryptoInfo = [];
         }
 
         return view('crypto.portfolio', [
-            'amounts' => $amounts,
-            'cryptos' => $allUserCryptos
+            'accounts' => $accounts,
+            'cryptoInfo' => $cryptoInfo
+        ]);
+    }
+
+    public function changeValues($id)
+    {
+        $selectedAccount = request()->input('account');
+        $selectedAccount = auth()->user()->accounts()->where('number', $selectedAccount)->first();
+
+        $selectedCurrency = $selectedAccount->currency;
+        $userCrypto = $selectedAccount->userCryptos()->where('cmc_id', $id)->first() ?? null;
+
+        $crypto = $this->cryptoRepository->findById($id, $selectedCurrency ?? 'EUR');
+
+        return response()->json([
+            'currency' => $selectedCurrency ?? 'EUR',
+            'crypto' => $crypto,
+            'amount' => $userCrypto->amount ?? 0
         ]);
     }
 }

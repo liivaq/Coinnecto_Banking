@@ -45,32 +45,33 @@ class CryptoTransactionController extends Controller
 
         $request->validated();
 
-        $crypto = $this->cryptoRepository->findById($request->crypto_coin);
+        $crypto = $this->cryptoRepository->findById($request->crypto_coin, $account->currency);
 
-        $toWithdraw = $crypto->getPrice() * $request->amount;
+        $toWithdraw = $crypto->price * $request->amount;
 
         $account->withdraw($toWithdraw);
 
-        $this->saveUserCrypto($crypto, $request);
+        $this->saveUserCrypto($crypto, $request, $account);
         $this->saveCryptoTransaction($crypto, $request, $account);
 
-        return Redirect::to(route('crypto.portfolio'))->with('success', 'Purchase Successful!');
+        return Redirect::to(route('crypto.portfolio'))
+            ->with('success', 'You bought '. $request->amount .' '. $crypto->symbol .' for '. $toWithdraw .' '. $account->currency);
     }
 
     public function sell(CryptoSellRequest $request)
     {
         $request->validated();
 
-        $cryptoCoin = $this->cryptoRepository->findById($request->crypto_coin);
-
         /** @var Account $account */
         $account = Account::where('number', $request->account)->firstOrFail();
 
-        $toDeposit = $cryptoCoin->getPrice() * $request->amount;
+        $cryptoCoin = $this->cryptoRepository->findById($request->crypto_coin, $account->currency);
+
+        $toDeposit = $cryptoCoin->price * $request->amount;
 
         $account->deposit($toDeposit);
 
-        $this->saveUserCrypto($cryptoCoin, $request);
+        $this->saveUserCrypto($cryptoCoin, $request, $account);
         $this->saveCryptoTransaction($cryptoCoin, $request, $account);
 
         return Redirect::to(route('crypto.portfolio'))->with('success', 'Crypto Sold!');
@@ -80,9 +81,9 @@ class CryptoTransactionController extends Controller
     {
         $transaction = (new CryptoTransaction())->fill([
             'account_id' => $account->id,
-            'cmc_id' => $coin->getId(),
-            'name' => $coin->getName(),
-            'price' => $coin->getPrice() * $request->amount,
+            'cmc_id' => $coin->id,
+            'name' => $coin->name,
+            'price_per_one' => $coin->price,
             'amount' => $request->amount,
             'type' => $request->type,
         ]);
@@ -90,12 +91,13 @@ class CryptoTransactionController extends Controller
         $transaction->save();
     }
 
-    public function saveUserCrypto(CryptoCoin $coin, Request $request): void
+    public function saveUserCrypto(CryptoCoin $coin, Request $request, Account $account): void
     {
         $user = auth()->user();
 
         $crypto = $user->cryptos()->firstOrNew([
-            'cmc_id' => $coin->getId(),
+            'account_id' => $account->id,
+            'cmc_id' => $coin->id,
         ]);
 
 
@@ -113,4 +115,5 @@ class CryptoTransactionController extends Controller
             $crypto->delete();
         }
     }
+
 }

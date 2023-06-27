@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('account_id');
             $table->integer('cmc_id');
             $table->string('name');
-            $table->float('price');
+            $table->float('price_per_one');
             $table->float('amount');
             $table->string('type');
             $table->timestamps();

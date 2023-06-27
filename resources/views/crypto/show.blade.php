@@ -5,7 +5,7 @@
         </x-slot>
     </x-slot>
 
-    <div class="pb-4">
+    <div id="result" class="pb-4">
         <div class="bg-white shadow sm:rounded-lg">
             <div class="flex items-center p-4 sm:p-8">
                 <div class="flex-none pr-4">
@@ -18,12 +18,12 @@
 
                 <div class="flex-1">
                     <p class="font-bold">You Own:</p>
-                    <p>{{$userCrypto->amount ?? 0}}</p>
+                    <p id="user-crypto-amount">{{$userCrypto->amount ?? 0}}</p>
                 </div>
 
                 <div class="flex-1">
-                    <p class="font-bold">Price (€)</p>
-                    <p>{{$crypto->price}}</p>
+                    <p class="font-bold">Price  <span class="currency">EUR</span></p>
+                    <p class="crypto-price">{{$crypto->price}}</p>
                 </div>
                 <div class="flex-1">
                     <p class="font-bold">Change 1h (%)</p>
@@ -71,7 +71,7 @@
                     @csrf
                     <div>
                         <x-input-label for="account" value="Choose your investment account"/>
-                        <x-selection-input id="account" name="account" class="mt-1 block w-full"
+                        <x-selection-input id="account" name="account" onchange="updateValues()" class="mt-1 block w-full"
                                            :value="old('account')">
                             @foreach($accounts as $account)
                                 <option value="{{$account->number}}">
@@ -82,14 +82,14 @@
                         </x-selection-input>
                     </div>
 
-                    <div x-data="{ price: {{ old('amount', 0) }} }">
-                        <input type="hidden" name="crypto_coin" value="{{$crypto->id}}"/>
+                    <div x-data="{ amount: {{ old('amount', 0) }} }">
+                        <input type="hidden" id="crypto_coin" name="crypto_coin" value="{{$crypto->id}}"/>
 
                         <x-input-label for="amount" value="Amount"/>
                         <x-text-input id="amount" name="amount" type="number" step="0.01" class="mt-1 block w-full"
-                                      :value="old('amount')" x-model="price"/>
+                                      :value="old('amount')" x-model="amount"/>
 
-                        <input type="hidden" id="price" name="price" value="{{$crypto->price}}">
+                        <input type="hidden" id="crypto-price" name="price" value="{{$crypto->price}}">
 
                         @error('amount')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -99,7 +99,8 @@
                         @enderror
 
                         <div class="mt-6">
-                            <p class="text-s text-gray-700">Total price: <span x-text="price * {{$crypto->price}}"> </span> €</p>
+                            <p class="text-s text-gray-700">Total price: <span class="total-price" x-text="amount * {{$crypto->price}}"></span>
+                                <span class="currency">EUR</span></p>
                         </div>
                     </div>
 
@@ -137,4 +138,39 @@
             @endif
         </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function updateValues() {
+            const account = document.getElementById('account').value;
+            const id = document.getElementById('crypto_coin').value
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            const requestData = {
+                account: account,
+                id: id
+            };
+
+            // Send AJAX request to the server
+            $.ajax({
+                url: "{{ route('crypto.view', $crypto->id) }}",
+                type: 'POST',
+                data: requestData,
+                success: function(response) {
+                    $('#user-crypto-amount').text(response.amount);
+                    $('.crypto-price').text(response.crypto.price);
+                    $('.currency').text(response.currency);
+                },
+                error: function() {
+                    alert('Error occurred while fetching data.');
+                }
+            });
+        }
+
+    </script>
 </x-app-layout>

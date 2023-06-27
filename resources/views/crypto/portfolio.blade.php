@@ -7,7 +7,7 @@
         <x-flash>{{$message}}</x-flash>
     @endif
 
-    @if(!$cryptos)
+    @if(!$cryptoInfo)
         <div class="mt-4 mb-6 bg-white p-5 rounded-xl">
             <div>
                 <h1 class="text-2xl font-bold">You have no Cryptos!</h1>
@@ -51,35 +51,39 @@
             </div>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
-            @foreach($cryptos as $crypto)
-                <div class="relative bg-white p-4 rounded-xl flex flex-col ">
-                    <img src="{{$crypto->getIconUrl()}}" alt="{{$crypto->getSymbol()}}"
-                         class="absolute top-4 right-4 w-12">
+            @foreach($accounts as $account)
+                @foreach($account->userCryptos as $crypto)
+                    @php($info = $cryptoInfo[$crypto->cmc_id])
+                    <div class="relative bg-white p-4 rounded-xl flex flex-col ">
+                        <img src="{{$info->iconUrl}}" alt="{{$info->symbol}}"
+                             class="absolute top-4 right-4 w-12">
 
-                    <div>
-                        <h4 class="text-xl font-bold">{{$crypto->getSymbol()}}</h4>
-                        <p class="text-gray-500">You own: {{$amounts[$crypto->getId()]}}</p>
-                        <p class="text-gray-500">Current Price: {{$crypto->getPrice()}}</p>
+                        <div>
+                            <h4 class="text-xl font-bold">{{$info->name}}</h4>
+                            <p class="text-gray-500">Account: {{$account->number}}</p>
+                            <p class="text-gray-500">You own: {{$crypto->amount}}</p>
+                            <p class="text-gray-500">Current Price: {{$info->price}}</p>
 
-                        @if($crypto->getPercentChange1h() > 0)
-                            <p class="text-green-500">Change (1h): {{$crypto->getPercentChange1h()}}</p>
-                        @endif
-                        @if($crypto->getPercentChange1h() < 0)
-                            <p class="text-red-500">Change (1h): {{$crypto->getPercentChange1h()}}</p>
-                        @endif
-                        @if($crypto->getPercentChange24h() > 0)
-                            <p class="text-green-500">Change (24h): {{$crypto->getPercentChange24h()}}</p>
-                        @endif
-                        @if($crypto->getPercentChange24h() < 0)
-                            <p class="text-red-500">Change (24h): {{$crypto->getPercentChange24h()}}</p>
-                        @endif
+                            @if($info->percentChange1h > 0)
+                                <p class="text-green-500">Change (1h): {{$info->percentChange1h}}</p>
+                            @endif
+                            @if($info->percentChange1h < 0)
+                                <p class="text-red-500">Change (1h): {{$info->percentChange1h}}</p>
+                            @endif
+                            @if($info->percentChange24h > 0)
+                                <p class="text-green-500">Change (24h): {{$info->percentChange24h}}</p>
+                            @endif
+                            @if($info->percentChange24h < 0)
+                                <p class="text-red-500">Change (24h): {{$info->percentChange24h}}</p>
+                            @endif
+                        </div>
+                        <div class="mt-4 flex justify-center">
+                            <a href="{{ url('crypto/'.$info->id) }}">
+                                <x-secondary-button>Trade</x-secondary-button>
+                            </a>
+                        </div>
                     </div>
-                    <div class="mt-4 flex justify-center">
-                        <a href="{{ url('crypto/'.$crypto->getId()) }}">
-                            <x-secondary-button>Trade</x-secondary-button>
-                        </a>
-                    </div>
-                </div>
+                @endforeach
             @endforeach
         </div>
     @endif

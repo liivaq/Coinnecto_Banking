@@ -15,7 +15,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="flex flex-col min-h-screen">
-        <div class="container font-sans antialiased bg-gradient-to-tr from-cyan-900 to-cyan-500 flex-grow min-w-full ">
+        <div class="container font-sans antialiased bg-gradient-to-tr from-cyan-900 to-cyan-500 flex-grow min-w-full pb-4 ">
             @include('layouts.navigation')
             <main class="max-w-7xl mx-auto sm:px-6 lg:px-8 py-5 overflow-hidden flex-grow">
                 {{ $slot }}
