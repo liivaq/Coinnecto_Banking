@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Account;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,19 @@ class ProfileController extends Controller
     public function dashboard()
     {
         $account = auth()->user()->accounts()->first();
-        $transactions = $account->transactions()->latest()->take(3)->get();
+
+        $transactions = Account::withTrashed()
+            ->find($account->id)
+            ->transactions()
+            ->with(['accountTo' => function ($query) {
+                $query->withTrashed();
+            }])
+            ->with(['accountFrom' => function ($query) {
+                $query->withTrashed();
+            }])
+            ->latest()
+            ->take(3)
+            ->get();
 
         return view('dashboard', [
             'account' => $account,
@@ -49,7 +62,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        return Redirect::route('profile.edit')->with('status', 'Profile Information Updated!');
     }
 
     public function destroy(Request $request): RedirectResponse

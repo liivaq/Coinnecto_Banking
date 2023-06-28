@@ -4,7 +4,7 @@
     </x-slot>
 
     @if ($message = Session::get('success'))
-        <x-flash>{{$message}}</x-flash>
+        <x-flash class="bg-green-200">{{$message}}</x-flash>
     @endif
 
     <div class="mt-2 mb-4 bg-white px-10 py-4 rounded-xl">

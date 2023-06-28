@@ -2,82 +2,40 @@
     <x-slot name="header">
         Crypto Transaction History
     </x-slot>
-    <div class="bg-white shadow-md rounded my-6">
-        <table class="min-w-full leading-normal">
-            <thead>
-            <tr>
-                <th
-                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                >
-                    Account
-                </th>
-                <th
-                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                >
-                    Name
-                </th>
-                <th
-                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                >
-                    Price Per One
-                </th>
-                <th
-                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                >
-                    Total Price
-                </th>
-                <th
-                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                >
-                    Amount
-                </th>
-                <th
-                    class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-                >
-                    Type
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($transactions as $transaction)
-                <tr>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap">{{$transaction->account->number}}</p>
-                    </td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap">{{$transaction->name}}</p>
-                    </td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap">{{$transaction->price_per_one}}</p>
-                    </td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap">{{$transaction->price_per_one * $transaction->amount}}</p>
-                    </td>
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                        <p class="text-gray-900 whitespace-no-wrap">{{$transaction->amount}}</p>
-                    </td>
 
-                    @if($transaction->type === 'buy')
-                    <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span aria-hidden class="absolute inset-0 bg-green-200 opacity-50 rounded-full"></span>
-            <span class="relative">Buy</span>
-          </span>
-                    </td>
-                    @endif
-                    @if($transaction->type === 'sell')
-                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-          <span class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight">
-            <span aria-hidden class="absolute inset-0 bg-red-200 opacity-50 rounded-full"></span>
-            <span class="relative">Sell</span>
-          </span>
-                        </td>
-                    @endif
-                </tr>
-            @endforeach
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            <div class="max-w-xl">
 
-            <!-- Add more rows as needed -->
-            </tbody>
-        </table>
+                <h1 class="text-xl font-medium text-gray-900 mb-6">
+                    Crypto Transaction History
+                </h1>
+
+                <h2 class="text-lg font-medium text-gray-900">
+                    Choose an account
+                </h2>
+
+                <p class="mt-1 text-sm text-gray-600">
+                    Select an investment account to view crypto transaction history
+                </p>
+                <form method="get" action="{{route('crypto.history')}}" class="mt-6 space-y-6">
+                    @csrf
+
+                    <div>
+                        <x-input-label for="account" value=""/>
+                        <x-selection-input id="account" name="account" class="mt-1 block w-full">
+                            @foreach($accounts as $account)
+                                <option value="{{$account->id}}">{{$account->number}}</option>
+                            @endforeach
+                        </x-selection-input>
+                    </div>
+
+                    <div>
+                        <x-primary-button>Show Transaction History</x-primary-button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
+
 </x-app-layout>

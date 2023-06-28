@@ -4,7 +4,6 @@
     </x-slot>
 
     <div class="flex pb-6">
-
         <form class="relative" action="{{route('crypto.search')}}">
             @csrf
             <x-text-input

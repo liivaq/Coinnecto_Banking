@@ -22,9 +22,6 @@ Route::get('/', function () {
     return view('index');
 })->middleware('guest');
 
-/*Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');*/
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [ProfileController::class, 'dashboard'])->name('dashboard');
@@ -37,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/accounts', [AccountController::class, 'index'])->name('accounts.index');
     Route::get('/accounts/create', [AccountController::class, 'create'])->name('accounts.create');
     Route::post('/accounts/create', [AccountController::class, 'store'])->name('accounts.store');
+    Route::delete('/accounts', [AccountController::class, 'destroy'])->name('account.destroy');
 });
 
 Route::middleware('auth')->group(function () {
@@ -49,6 +47,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/crypto/transactions', [CryptoTransactionController::class, 'transactions'])->name('crypto.transactions');
+    Route::get('/crypto/history', [CryptoTransactionController::class, 'show'])->name('crypto.history');
     Route::post('/crypto/buy', [CryptoTransactionController::class, 'buy'])->name('crypto.buy');
     Route::post('/crypto/sell', [CryptoTransactionController::class, 'sell'])->name('crypto.sell');
 });

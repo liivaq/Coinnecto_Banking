@@ -35,8 +35,15 @@ class TransactionController extends Controller
         /** @var Account $account */
         $account = auth()->user()->accounts()->where('id', $request->account)->first();
 
-        $transactions = $account
+        $transactions = Account::withTrashed()
+            ->find($account->id)
             ->transactions()
+            ->with(['accountTo' => function ($query) {
+                $query->withTrashed();
+            }])
+            ->with(['accountFrom' => function ($query) {
+                $query->withTrashed();
+            }])
             ->orderBy('created_at', 'desc')
             ->paginate(3);
 
@@ -44,6 +51,41 @@ class TransactionController extends Controller
             'account' => $account,
             'transactions' => $transactions,
         ]);
+    }
+
+    public function create()
+    {
+        $accounts = auth()->user()->accounts()->get();
+        return view('transactions.create', [
+            'accounts' => $accounts
+        ]);
+    }
+
+    public function transfer(TransferRequest $request): Redirector|Application|RedirectResponse
+    {
+        $request->validated();
+
+        $accountFrom = Account::where('number', $request->account_from)->firstOrFail();
+        $accountTo = Account::where('number', $request->account_to)->firstOrFail();
+
+        $converted = $this->convert($accountFrom->currency, $accountTo->currency, (float)$request->amount);
+
+        $convertedAmount = $converted['convertedAmount'];
+        $exchangeRate = $converted['exchangeRate'];
+
+        $accountFrom->withdraw((float) $request->amount);
+        $accountTo->deposit($convertedAmount);
+
+        $this->saveTransaction(
+            $accountFrom,
+            $accountTo,
+            (float) $request->amount,
+            $convertedAmount,
+            $exchangeRate
+        );
+
+        return Redirect::to(route('transactions.history', ['account' => $accountFrom->id]))->with('success', 'Transaction successful!');
+
     }
 
     public function filter(Request $request)
@@ -80,41 +122,6 @@ class TransactionController extends Controller
             'account' => $account,
             'transactions' => $transactions,
         ]);
-    }
-
-    public function create()
-    {
-        $accounts = auth()->user()->accounts()->get();
-        return view('transactions.create', [
-            'accounts' => $accounts
-        ]);
-    }
-
-    public function transfer(TransferRequest $request): Redirector|Application|RedirectResponse
-    {
-        $accountFrom = Account::where('number', $request->account_from)->firstOrFail();
-        $accountTo = Account::where('number', $request->account_to)->firstOrFail();
-
-        $request->validated();
-
-        $converted = $this->convert($accountFrom->currency, $accountTo->currency, (float)$request->amount);
-
-        $convertedAmount = $converted['convertedAmount'];
-        $exchangeRate = $converted['exchangeRate'];
-
-        $accountFrom->withdraw((float) $request->amount);
-        $accountTo->deposit($convertedAmount);
-
-        $this->saveTransaction(
-            $accountFrom,
-            $accountTo,
-            (float) $request->amount,
-            $convertedAmount,
-            $exchangeRate
-        );
-
-        return Redirect::to(route('transactions.history', ['account' => $accountFrom->id]))->with('success', 'Transaction successful!');
-
     }
 
     private function saveTransaction(

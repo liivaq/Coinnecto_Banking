@@ -4,7 +4,7 @@
     </x-slot>
 
     @if ($message = Session::get('success'))
-        <x-flash>{{$message}}</x-flash>
+        <x-flash class="bg-green-200">{{$message}}</x-flash>
     @endif
 
     @if(!$cryptoInfo)

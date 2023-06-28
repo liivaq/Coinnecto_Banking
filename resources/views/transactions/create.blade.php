@@ -22,10 +22,14 @@
                                            :value="old('account_from')">
                             @foreach($accounts as $account)
                                 <option value="{{$account->number}}">
-                                    {{$account->name}} {{$account->number}} ({{number_format($account->balance, 2)}})
+                                    {{$account->name}} {{$account->number}} ({{number_format($account->balance, 2)}} {{$account->currency}} )
+                                    / <span class="italic">{{$account->type}}</span>
                                 </option>
                             @endforeach
                         </x-selection-input>
+                        @error('account_from')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>

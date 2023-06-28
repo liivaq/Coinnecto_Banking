@@ -24,26 +24,33 @@ class CryptoTransactionController extends Controller
     {
         $accounts = auth()->user()->accounts()->where('type', 'investment')->get();
 
-        $transactions = CryptoTransaction::with(['account'])
-            ->whereIn('account_id', $accounts->pluck('id'))
-            ->get();
-
-        $ids = $transactions->pluck('cmc_id')->all();
-        $cryptos = $this->cryptoRepository->findMultipleById($ids);
-
         return view('crypto.transactions', [
             'accounts' => $accounts,
+        ]);
+    }
+
+    public function show(Request $request)
+    {
+        /** @var Account $account */
+        $account = auth()->user()->accounts()->where('id', $request->account)->first();
+
+        $transactions = $account
+            ->cryptoTransactions()
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
+
+        return view('crypto.history', [
+            'account' => $account,
             'transactions' => $transactions,
-            'cryptos' => $cryptos
         ]);
     }
 
     public function buy(CryptoBuyRequest $request)
     {
+        $request->validated();
+
         /** @var Account $account */
         $account = Account::where('number', $request->account)->firstOrFail();
-
-        $request->validated();
 
         $crypto = $this->cryptoRepository->findById($request->crypto_coin, $account->currency);
 
