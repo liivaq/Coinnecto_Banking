@@ -75,7 +75,7 @@
                                            selected="{{ old('account') }}" x-on:change="handleSelection" x-model="selectedOption"
                                            x-data="{ oldOption: '{{ old('account') }}' }">
                             @foreach($accounts as $account)
-                                <option value="{{$account->number}}" x-bind:selected="oldOption === '{{$account->number}}' ? true : false">
+                                <option value="{{$account->number}}" :selected="oldOption === '{{$account->number}}' ? true : false">
                                     {{$account->name}} {{$account->number}} ({{number_format($account->balance, 2)}}
                                     )
                                 </option>

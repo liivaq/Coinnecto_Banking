@@ -34,16 +34,18 @@
 
     <ul role="list" class="flex-wrap gap-y-10">
         @foreach($accounts as $account)
-            <li class="flex my-2 bg-white p-5 rounded-xl justify-between ">
-                <div class="flex-col mr-20">
-                    <div class="font-bold text-2xl">{{ $account->name }}</div>
-                    <div class="text-gray-600">{{ $account->number }}</div>
-                    <div class="text-gray-600">{{ ucfirst($account->type) }} account</div>
+            <li class="flex flex-col my-2 bg-white p-5 rounded-xl">
+                <div class="flex items-start">
+                    <div class="mr-20">
+                        <div class="font-bold text-2xl">{{ $account->name }}</div>
+                        <div class="text-gray-600">{{ $account->number }}</div>
+                        <div class="text-gray-600">{{ ucfirst($account->type) }} account</div>
+                    </div>
+                    <div class="flex-grow"></div>
+                    <div class="text-2xl text-gray-600 pt-10">{{ number_format($account->balance, 2) }} {{strtoupper($account->currency)}}</div>
                 </div>
-                <div class="flex my-auto text-2xl text-gray-600">
-                    <div
-                        class="mr-6">{{ number_format($account->balance, 2) }} {{strtoupper($account->currency)}}</div>
-                    <div class="flex">
+                <div class="flex mt-4">
+                    <div class="flex gap-x-4">
                         <div>
                             <a href="{{ route('transactions.history', ['account' => $account->id]) }}">
                                 <x-secondary-button>
@@ -78,5 +80,4 @@
             </li>
         @endforeach
     </ul>
-
 </x-app-layout>
