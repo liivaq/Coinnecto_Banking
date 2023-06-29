@@ -60,6 +60,10 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-md my-6">
+        @if(count($transactions) === 0)
+            <div class="p-10 text-xl font-semibold">You don't have any transactions connected to this account</div>
+        @else
+
         <table class="min-w-full leading-normal">
             <thead>
             <tr>
@@ -149,7 +153,7 @@
         <div class="">
             {{ $transactions->appends(['account' => $account->id, 'from' => $from ?? null, 'to' => $to ?? null,'search'=> $search ?? null])->links() }}
         </div>
-
+        @endif
     </div>
 
 </x-app-layout>

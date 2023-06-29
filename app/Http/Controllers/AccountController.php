@@ -6,11 +6,7 @@ use App\Http\Requests\CreateAccountRequest;
 use App\Http\Requests\DeleteAccountRequest;
 use App\Models\Account;
 use App\Repositories\CurrencyRepository;
-use App\Rules\AccountName;
-use App\Rules\CheckBalance;
-use App\Rules\CheckCryptoBalance;
-use App\Rules\CheckMainAccount;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -18,7 +14,8 @@ class AccountController extends Controller
 {
     private CurrencyRepository $currencyRepository;
 
-    public function __construct(CurrencyRepository $currencyRepository){
+    public function __construct(CurrencyRepository $currencyRepository)
+    {
         $this->currencyRepository = $currencyRepository;
     }
 
@@ -32,7 +29,13 @@ class AccountController extends Controller
 
     public function create()
     {
-        $currencies = $this->currencyRepository->all();
+        $currencies = Cache::get('currencies');
+
+        if (!$currencies) {
+            $currencies = $this->currencyRepository->all();
+            Cache::put('currencies', $currencies, now()->addHours(5));
+        }
+
         return view('accounts.create', [
             'currencies' => $currencies
         ]);

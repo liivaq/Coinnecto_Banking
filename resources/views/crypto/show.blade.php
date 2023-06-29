@@ -18,7 +18,7 @@
 
                 <div class="flex-1">
                     <p class="font-bold">You Own:</p>
-                    <p id="user-crypto-amount">{{$userCrypto->amount ?? 0}}</p>
+                    <p class="user-crypto-amount">{{$userCrypto->amount ?? 0}}</p>
                 </div>
 
                 <div class="flex-1">
@@ -47,12 +47,12 @@
         </div>
     </div>
 
-    <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+    <div x-data="{ selectedOption: '', cryptoId: '', price: {{$crypto->price}} }" x-init="cryptoId = '{{ $crypto->id }}'"  class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
         <div class="max-w-xl">
             @if(count($accounts) === 0)
                 <div class="flex-col">
                     <div class="text-xl font-semibold">Open an investment account to
-                        trade {{$crypto->getName()}}</div>
+                        trade {{$crypto->name}}</div>
                     <div class="mt-4">
                         <a href="{{ route('accounts.create') }}">
                             <x-secondary-button>Create an account</x-secondary-button>
@@ -65,16 +65,17 @@
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-600">
-                    Buy and sell your {{$crypto->name}}
+                    Buy and sell {{$crypto->name}}
                 </p>
                 <form method="post" action="{{ route('crypto.buy') }}" class="mt-6 space-y-6" autocomplete="off">
                     @csrf
-                    <div>
+                    <div >
                         <x-input-label for="account" value="Choose your investment account"/>
-                        <x-selection-input id="account" name="account" onchange="updateValues()" class="mt-1 block w-full"
-                                           :value="old('account')">
+                        <x-selection-input id="account" name="account" class="mt-1 block w-full"
+                                           selected="{{ old('account') }}" x-on:change="handleSelection" x-model="selectedOption"
+                                           x-data="{ oldOption: '{{ old('account') }}' }">
                             @foreach($accounts as $account)
-                                <option value="{{$account->number}}">
+                                <option value="{{$account->number}}" x-bind:selected="oldOption === '{{$account->number}}' ? true : false">
                                     {{$account->name}} {{$account->number}} ({{number_format($account->balance, 2)}}
                                     )
                                 </option>
@@ -83,7 +84,7 @@
                     </div>
 
                     <div x-data="{ amount: {{ old('amount', 0) }} }">
-                        <input type="hidden" id="crypto_coin" name="crypto_coin" value="{{$crypto->id}}"/>
+                        <input x-model="cryptoId" type="hidden" id="crypto_coin" name="crypto_coin" value="{{ $crypto->id }}"/>
 
                         <x-input-label for="amount" value="Amount"/>
                         <x-text-input id="amount" name="amount" type="number" step="0.01" class="mt-1 block w-full"
@@ -99,7 +100,7 @@
                         @enderror
 
                         <div class="mt-6">
-                            <p class="text-s text-gray-700">Total price: <span class="total-price" x-text="amount * {{$crypto->price}}"></span>
+                            <p class="text-s text-gray-700">Total price: <span class="total-price" x-text="amount * price"></span>
                                 <span class="currency">EUR</span></p>
                         </div>
                     </div>
@@ -139,38 +140,47 @@
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        function updateValues() {
-            const account = document.getElementById('account').value;
-            const id = document.getElementById('crypto_coin').value
+        function handleSelection() {
+            if (this.selectedOption) {
+                const requestData = {
+                    account: this.selectedOption,
+                    id: this.cryptoId
+                };
 
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
+                fetch('/crypto/values', {
+                    method: 'POST',
+                    body: JSON.stringify(requestData),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Fetched data:', data);
 
-            const requestData = {
-                account: account,
-                id: id
-            };
+                        const amountElements = document.querySelectorAll('.user-crypto-amount');
+                        amountElements.forEach(element => {
+                            element.textContent = data.amount;
+                        });
 
-            // Send AJAX request to the server
-            $.ajax({
-                url: "{{ route('crypto.view', $crypto->id) }}",
-                type: 'POST',
-                data: requestData,
-                success: function(response) {
-                    $('#user-crypto-amount').text(response.amount);
-                    $('.crypto-price').text(response.crypto.price);
-                    $('.currency').text(response.currency);
-                },
-                error: function() {
-                    alert('Error occurred while fetching data.');
-                }
-            });
+                        const priceElements = document.querySelectorAll('.crypto-price');
+                        priceElements.forEach(element => {
+                            element.textContent = data.crypto.price;
+                        });
+
+                        this.price = data.crypto.price;
+
+                        const currencyElements = document.querySelectorAll('.currency');
+                        currencyElements.forEach(element => {
+                            element.textContent = data.currency;
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
         }
-
     </script>
 </x-app-layout>

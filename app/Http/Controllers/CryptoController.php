@@ -39,7 +39,7 @@ class CryptoController extends Controller
     {
         $userCrypto = auth()->user()->cryptos()->where('cmc_id', $id)->first();
         $accounts = auth()->user()->accounts()->where('type', 'investment')->get();
-        $crypto = $this->cryptoRepository->findById($id, /*selected currency here*/);
+        $crypto = $this->cryptoRepository->findById($id);
 
         return view('crypto.show', [
             'crypto' => $crypto,
@@ -83,15 +83,17 @@ class CryptoController extends Controller
         ]);
     }
 
-    public function changeValues($id)
+    public function changeValues()
     {
         $selectedAccount = request()->input('account');
+        $cryptoId = request()->input('id');
+
         $selectedAccount = auth()->user()->accounts()->where('number', $selectedAccount)->first();
 
         $selectedCurrency = $selectedAccount->currency;
-        $userCrypto = $selectedAccount->userCryptos()->where('cmc_id', $id)->first() ?? null;
+        $userCrypto = $selectedAccount->userCryptos()->where('cmc_id', $cryptoId)->first() ?? null;
 
-        $crypto = $this->cryptoRepository->findById($id, $selectedCurrency ?? 'EUR');
+        $crypto = $this->cryptoRepository->findById($cryptoId, $selectedCurrency ?? 'EUR');
 
         return response()->json([
             'currency' => $selectedCurrency ?? 'EUR',

@@ -25,7 +25,7 @@
                         <x-input-label for="account" value=""/>
                         <x-selection-input id="account" name="account" class="mt-1 block w-full">
                             @foreach($accounts as $account)
-                                <option value="{{$account->id}}">{{$account->number}}</option>
+                                <option value="{{$account->id}}">{{$account->name}} {{$account->number}}</option>
                             @endforeach
                         </x-selection-input>
                     </div>

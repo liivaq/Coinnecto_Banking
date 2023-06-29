@@ -43,22 +43,35 @@
                 <div class="flex my-auto text-2xl text-gray-600">
                     <div
                         class="mr-6">{{ number_format($account->balance, 2) }} {{strtoupper($account->currency)}}</div>
-                    <div>
-                        <a href="{{ route('transactions.history', ['account' => $account->id]) }}">
-                            <x-secondary-button>
-                                Transaction History
-                            </x-secondary-button>
-                        </a>
+                    <div class="flex">
+                        <div>
+                            <a href="{{ route('transactions.history', ['account' => $account->id]) }}">
+                                <x-secondary-button>
+                                    Transaction History
+                                </x-secondary-button>
+                            </a>
+                        </div>
+                        @if($account->type === 'investment')
+                            <div>
+                                <a href="{{ route('crypto.history', ['account' => $account->id]) }}">
+                                    <x-secondary-button>
+                                        Crypto Transaction History
+                                    </x-secondary-button>
+                                </a>
+                            </div>
+                        @endif
                         @if($account->name !== 'Main Checking Account')
-                            <form method="post" action="{{route('account.destroy')}}">
-                                @csrf
-                                @method('delete')
-                                <label for="account"></label>
-                                <input hidden id="account" name="account" value="{{$account->id}}"/>
-                                <x-primary-button class="bg-red-400">
-                                    Delete Account
-                                </x-primary-button>
-                            </form>
+                            <div>
+                                <form method="post" action="{{route('account.destroy')}}">
+                                    @csrf
+                                    @method('delete')
+                                    <label for="account"></label>
+                                    <input hidden id="account" name="account" value="{{$account->id}}"/>
+                                    <x-primary-button class="bg-red-400">
+                                        Delete Account
+                                    </x-primary-button>
+                                </form>
+                            </div>
                         @endif
                     </div>
                 </div>

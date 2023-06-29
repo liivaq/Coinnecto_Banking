@@ -10,6 +10,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 
 class TransactionController extends Controller
@@ -145,7 +146,12 @@ class TransactionController extends Controller
 
     private function convert(string $from, string $to, float $amount): array
     {
-        $currencies = $this->currencyRepository->all();
+        $currencies = Cache::get('currencies');
+
+        if (!$currencies) {
+            $currencies = $this->currencyRepository->all();
+            Cache::put('currencies', $currencies, now()->addHours(5));
+        }
 
         $fromCurrency = $currencies[$from];
         $toCurrency = $currencies[$to];
