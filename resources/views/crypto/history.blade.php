@@ -24,7 +24,7 @@
 
     <div class="bg-white rounded-xl shadow-md my-6">
         @if(count($transactions) === 0)
-            <div class="p-10 text-xl font-semibold">You don't have any transactions connected to this account</div>
+            <div class="p-10 text-xl font-semibold">No transactions found.</div>
         @else
 
             <table class="min-w-full leading-normal">

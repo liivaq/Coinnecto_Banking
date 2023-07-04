@@ -14,7 +14,7 @@ class CheckCryptoBalance implements Rule
 
         if($account->type === 'investment')
         {
-            return !$account->userCryptos()->exists();
+            return !$account->cryptos()->exists();
         }
 
         return true;

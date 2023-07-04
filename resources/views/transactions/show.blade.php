@@ -29,7 +29,10 @@
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="from" name="from" type="date" placeholder="Select from date"
-                                value="{{ $from ?? null }}">
+                                value="{{ $from ?? old('from') ?? null }}">
+                            @error('from')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="px-3">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="to">
@@ -37,7 +40,10 @@
                             </label>
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="to" name="to"  type="date" placeholder="Select to date" value="{{ $to ?? null }}">
+                                id="to" name="to"  type="date" placeholder="Select to date" value="{{ $to ?? old('to') ?? null }}">
+                            @error('to')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="px-3">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="search">
@@ -46,7 +52,7 @@
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="search" name="search" type="text" placeholder="Search transaction"
-                                value="">
+                                value="{{ $search ?? null }}">
                         </div>
                         <div class="px-3 pt-7">
                             <label>
@@ -62,7 +68,7 @@
 
     <div class="bg-white rounded-xl shadow-md my-6">
         @if(count($transactions) === 0)
-            <div class="p-10 text-xl font-semibold">You don't have any transactions connected to this account</div>
+            <div class="p-10 text-xl font-semibold">No transactions found.</div>
         @else
 
             <table class="min-w-full leading-normal">

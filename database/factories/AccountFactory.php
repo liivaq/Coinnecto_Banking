@@ -17,9 +17,11 @@ class AccountFactory extends Factory
      */
     public function definition()
     {
+        $currencies = ['AUD', 'USD', 'NZD', 'EUR', 'GBP'];
+
         return [
-            'user_id' => User::factory(),
-            'currency' => $this->faker->currencyCode,
+            'user_id' => User::factory()->create()->id,
+            'currency' => $currencies[rand(0, count($currencies)-1)],
             'number' => $this->faker->iban,
             'balance' => $this->faker->numberBetween(100, 2000),
             'name' => 'Main Checking Account',

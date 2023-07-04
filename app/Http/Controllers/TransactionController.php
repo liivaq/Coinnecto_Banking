@@ -96,13 +96,19 @@ class TransactionController extends Controller
 
     public function filter(Request $request)
     {
+        $request->validate([
+            'from' => ['required'],
+            'to' => ['required']
+        ]);
+
         $account = auth()->user()->accounts()->where('id', $request->account)->first();
 
         $transactions = Transaction::where(function ($query) use ($account) {
             $query->where('account_from_id', $account->id)
                 ->orWhere('account_to_id', $account->id);
         })
-            ->whereBetween('created_at', [$request->from, $request->to])
+            ->whereDate('created_at', '>=', $request->from)
+            ->whereDate('created_at', '<=', $request->to)
             ->where(function ($query) use ($request) {
                 $searchTerm = $request->search;
                 $query->whereHas('accountFrom.user', function ($query) use ($searchTerm) {
