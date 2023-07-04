@@ -96,7 +96,38 @@ class TransactionController extends Controller
 
     public function filter(Request $request)
     {
-        $accounts = auth()->user()->accounts();
+        $account = auth()->user()->accounts()->where('id', $request->account)->first();
+
+        $transactions = Transaction::where(function ($query) use ($account) {
+            $query->where('account_from_id', $account->id)
+                ->orWhere('account_to_id', $account->id);
+        })
+            ->whereBetween('created_at', [$request->from, $request->to])
+            ->where(function ($query) use ($request) {
+                $searchTerm = $request->search;
+                $query->whereHas('accountFrom.user', function ($query) use ($searchTerm) {
+                    $query->where('name', 'like', '%' . $searchTerm . '%');
+                })
+                    ->orWhereHas('accountTo.user', function ($query) use ($searchTerm) {
+                        $query->where('name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('accountFrom', function ($query) use ($searchTerm) {
+                        $query->where('number', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('accountTo', function ($query) use ($searchTerm) {
+                        $query->where('number', 'like', '%' . $searchTerm . '%');
+                    });
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(3);
+
+        return view('transactions.show', [
+            'account' => $account,
+            'transactions' => $transactions,
+            'from' => $request->from,
+            'to' => $request->to,
+            'search' => $request->search
+        ]);
     }
 
     private function saveTransaction(

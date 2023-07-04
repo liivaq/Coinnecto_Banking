@@ -29,7 +29,7 @@
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="from" name="from" type="date" placeholder="Select from date"
-                                value="">
+                                value="{{ $from ?? null }}">
                         </div>
                         <div class="px-3">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="to">
@@ -37,7 +37,7 @@
                             </label>
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="to" name="to" value="" type="date" placeholder="Select to date">
+                                id="to" name="to"  type="date" placeholder="Select to date" value="{{ $to ?? null }}">
                         </div>
                         <div class="px-3">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="search">
@@ -153,7 +153,7 @@
 
             <div class="">
                 <div>
-                    {{ $transactions->appends(['account' => $account->id])->links() }}
+                    {{ $transactions->appends(['account' => $account->id, 'from' => $from ?? null, 'to' => $to ?? null, 'search' => $search ?? null])->links() }}
                 </div>
                 @endif
             </div>
