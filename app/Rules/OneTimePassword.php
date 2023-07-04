@@ -5,7 +5,7 @@ namespace App\Rules;
 use Illuminate\Contracts\Validation\Rule;
 use PragmaRX\Google2FA\Google2FA;
 
-class Otp implements Rule
+class OneTimePassword implements Rule
 {
 
     public function __construct()

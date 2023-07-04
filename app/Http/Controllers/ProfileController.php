@@ -19,12 +19,12 @@ class ProfileController extends Controller
         $transactions = Account::withTrashed()
             ->find($account->id)
             ->transactions()
-            ->with(['accountTo' => function ($query) {
+           /* ->with(['accountTo' => function ($query) {
                 $query->withTrashed();
             }])
             ->with(['accountFrom' => function ($query) {
                 $query->withTrashed();
-            }])
+            }])*/
             ->latest()
             ->take(3)
             ->get();

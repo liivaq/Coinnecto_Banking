@@ -2,8 +2,12 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\CryptoCoinNotFoundException;
 use App\Models\CryptoCoin;
+use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Cache;
 
 class CoinMarketCapRepository
 {
@@ -19,107 +23,128 @@ class CoinMarketCapRepository
         $this->apiKey = env('COIN_MARKET_CAP_KEY');
     }
 
-    public function all()
+    public function all(): array
     {
-        $response = $this->client->get('v1/cryptocurrency/listings/latest',
-            [
-                'headers' => [
-                    "Accepts" => " application/json",
-                    "X-CMC_PRO_API_KEY" => $this->apiKey
-                ],
-                'query' => [
-                    'convert' => 'EUR',
-                    'limit' => 10
-                ]
-            ]
-        );
+        $cryptoCollection = Cache::get('crypto');
 
-        $coins = json_decode($response->getBody()->getContents())->data;
+        if (!$cryptoCollection) {
 
-        $cryptoCollection = [];
+            try {
+                $response = $this->client->get('v1/cryptocurrency/listings/latest',
+                    [
+                        'headers' => [
+                            "Accepts" => " application/json",
+                            "X-CMC_PRO_API_KEY" => $this->apiKey
+                        ],
+                        'query' => [
+                            'convert' => 'EUR',
+                            'limit' => 10
+                        ]
+                    ]
+                );
 
-        foreach ($coins as $coin) {
-            $cryptoCollection[$coin->symbol] = $this->buildModel($coin);
+                $coins = json_decode($response->getBody()->getContents())->data;
+                $cryptoCollection = [];
+
+                foreach ($coins as $coin) {
+                    $cryptoCollection[$coin->symbol] = $this->buildModel($coin);
+                }
+
+                Cache::put('crypto', $cryptoCollection, now()->addSeconds(120));
+
+            } catch (GuzzleException $exception) {
+                return [];
+            }
         }
-
         return $cryptoCollection;
-
     }
 
     public function findById(string $id, string $currency = 'EUR'): CryptoCoin
     {
-        $response = $this->client->get('v1/cryptocurrency/quotes/latest',
-            [
-                'headers' => [
-                    "Accepts" => " application/json",
-                    "X-CMC_PRO_API_KEY" => $this->apiKey
-                ],
-                'query' => [
-                    'id' => $id,
-                    'convert' => $currency
+        try {
+            $response = $this->client->get('v1/cryptocurrency/quotes/latest',
+                [
+                    'headers' => [
+                        "Accepts" => " application/json",
+                        "X-CMC_PRO_API_KEY" => $this->apiKey
+                    ],
+                    'query' => [
+                        'id' => $id,
+                        'convert' => $currency
+                    ]
                 ]
-            ]
-        );
+            );
 
-        $coin = json_decode($response->getBody()->getContents())->data->{$id};
+            $coin = json_decode($response->getBody()->getContents())->data->{$id};
 
-        return $this->buildModel($coin, $currency);
+            return $this->buildModel($coin, $currency);
+
+        } catch (GuzzleException $exception) {
+            throw new CryptoCoinNotFoundException();
+        }
     }
 
     public function findBySymbol(string $symbol): CryptoCoin
     {
-        $response = $this->client->get('v1/cryptocurrency/quotes/latest',
-            [
-                'headers' => [
-                    "Accepts" => " application/json",
-                    "X-CMC_PRO_API_KEY" => $this->apiKey
-                ],
-                'query' => [
-                    'symbol' => $symbol,
-                    'convert' => 'EUR'
+        try {
+            $response = $this->client->get('v1/cryptocurrency/quotes/latest',
+                [
+                    'headers' => [
+                        "Accepts" => " application/json",
+                        "X-CMC_PRO_API_KEY" => $this->apiKey
+                    ],
+                    'query' => [
+                        'symbol' => $symbol,
+                        'convert' => 'EUR'
+                    ]
                 ]
-            ]
-        );
+            );
 
-        $coin = json_decode($response->getBody()->getContents())->data;
+            $coin = json_decode($response->getBody()->getContents())->data;
 
-        if (!count((array)$coin)) {
-            throw new \Exception();
+            if (!count((array)$coin)) {
+                throw new CryptoCoinNotFoundException();
+            }
+
+            return $this->buildModel($coin->{strtoupper($symbol)});
+        } catch (GuzzleException $exception) {
+            throw new Exception;
         }
-
-        return $this->buildModel($coin->{strtoupper($symbol)});
     }
 
 
     public function findMultipleById(array $ids): array
     {
-        $response = $this->client->get('v1/cryptocurrency/quotes/latest',
-            [
-                'headers' => [
-                    "Accepts" => " application/json",
-                    "X-CMC_PRO_API_KEY" => $this->apiKey
-                ],
-                'query' => [
-                    'id' => implode(',', $ids),
-                    'convert' => 'EUR'
+        try {
+            $response = $this->client->get('v1/cryptocurrency/quotes/latest',
+                [
+                    'headers' => [
+                        "Accepts" => " application/json",
+                        "X-CMC_PRO_API_KEY" => $this->apiKey
+                    ],
+                    'query' => [
+                        'id' => implode(',', $ids),
+                        'convert' => 'EUR'
+                    ]
                 ]
-            ]
-        );
+            );
 
-        $coins = json_decode($response->getBody()->getContents())->data;
+            $coins = json_decode($response->getBody()->getContents())->data;
 
-        if (!count((array)$coins)) {
-            throw new \Exception();
+            if (!count((array)$coins)) {
+                throw new CryptoCoinNotFoundException();
+            }
+
+            $cryptoCollection = [];
+
+            foreach ($coins as $coin) {
+                $cryptoCollection[$coin->id] = $this->buildModel($coin);
+            }
+
+            return $cryptoCollection;
+        } catch (GuzzleException $exception) {
+            return [];
         }
-
-        $cryptoCollection = [];
-
-        foreach ($coins as $coin) {
-            $cryptoCollection[$coin->id] = $this->buildModel($coin);
-        }
-
-        return $cryptoCollection;
-
     }
 
     private function buildModel(\stdClass $coin, string $currency = 'EUR'): CryptoCoin

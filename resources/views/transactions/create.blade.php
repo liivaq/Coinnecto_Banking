@@ -1,7 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-            New Transaction
+        New Transaction
     </x-slot>
+
+    @if (Session::has('transactionError'))
+        <x-flash class="bg-red-200">{!! Session::get('transactionError')  !!}</x-flash>
+    @endif
 
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
         <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
@@ -18,11 +22,14 @@
 
                     <div>
                         <x-input-label for="account_from" value="From"/>
-                        <x-selection-input id="account_from" name="account_from" class="mt-1 block w-full"
-                                           :value="old('account_from')">
+                        <x-selection-input x-cloak id="account_from" name="account_from" class="mt-1 block w-full"
+                                           :selected="old('account_from')"
+                                           x-data="{ oldOption: '{{ old('account_from') }}' }">
                             @foreach($accounts as $account)
-                                <option value="{{$account->number}}">
-                                    {{$account->name}} {{$account->number}} ({{number_format($account->balance, 2)}} {{$account->currency}} )
+                                <option value="{{$account->number}}"
+                                        x-bind:selected="oldOption === '{{$account->number}}' ? true : false">
+                                    {{$account->name}} {{$account->number}}
+                                    ({{number_format($account->balance, 2)}} {{$account->currency}} )
                                     / <span class="italic">{{$account->type}}</span>
                                 </option>
                             @endforeach
@@ -56,7 +63,8 @@
                             <x-tooltip>
                                 Use an authenticator app - enter the code below.
                                 See more information on your
-                                <a class="text-decoration-line: underline" href="{{ route('profile.edit') }}">Profile page</a>
+                                <a class="text-decoration-line: underline" href="{{ route('profile.edit') }}">Profile
+                                    page</a>
                             </x-tooltip>
                         </div>
                         <x-text-input id="one_time_password" name="one_time_password" type="text"
@@ -65,11 +73,6 @@
                         @error('one_time_password')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
-                    </div>
-
-                    <div>
-
-
                     </div>
 
                     <div>

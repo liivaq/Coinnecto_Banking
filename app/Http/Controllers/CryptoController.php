@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\CryptoCoinNotFoundException;
 use App\Repositories\CoinMarketCapRepository;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
@@ -32,23 +35,31 @@ class CryptoController extends Controller
         return view('crypto.index', [
             'cryptoCollection' => $cryptoCollection
         ]);
+
     }
 
-
-    public function show($id)
+    public function show($id): View|RedirectResponse
     {
-        $userCrypto = auth()->user()->cryptos()->where('cmc_id', $id)->first();
-        $accounts = auth()->user()->accounts()->where('type', 'investment')->get();
-        $crypto = $this->cryptoRepository->findById($id);
+        try {
+            $accounts = auth()->user()->accounts()
+                ->where('type', 'investment')
+                ->with(['cryptos' => function ($query) use ($id) {
+                    $query->where('cmc_id', $id);
+                }])
+                ->get();
 
-        return view('crypto.show', [
-            'crypto' => $crypto,
-            'accounts' => $accounts,
-            'userCrypto' => $userCrypto
-        ]);
+            $crypto = $this->cryptoRepository->findById($id);
+
+            return view('crypto.show', [
+                'crypto' => $crypto,
+                'accounts' => $accounts,
+            ]);
+        }catch (CryptoCoinNotFoundException){
+            return redirect()->back()->withErrors(['error' => 'Sorry! Failed to retrieve information, try again later.']);
+        }
     }
 
-    public function search(Request $request)
+    public function search(Request $request): Factory|View|RedirectResponse|Application
     {
         try {
             $request->validate([
@@ -58,22 +69,22 @@ class CryptoController extends Controller
             return view('crypto.index', [
                 'cryptoCollection' => [$crypto]
             ]);
-        } catch (Exception $exception) {
+        } catch (CryptoCoinNotFoundException $exception) {
             return Redirect::back()->withErrors(['error' => 'Nothing was found. Provide a valid symbol']);
         }
     }
 
-    public function userCryptos()
+    public function userCryptos(): Factory|View|Application
     {
         $accounts = auth()->user()
             ->accounts()->where('type', 'investment')
-            ->with('userCryptos')
+            ->with('cryptos')
             ->get();
 
         try {
-            $cryptoIds = auth()->user()->cryptos()->pluck('cmc_id')->toArray();
+            $cryptoIds = $accounts->pluck('cryptos')->flatten()->pluck('cmc_id')->toArray();
             $cryptoInfo = $this->cryptoRepository->findMultipleById($cryptoIds);
-        } catch (Exception $exception) {
+        } catch (CryptoCoinNotFoundException $exception) {
             $cryptoInfo = [];
         }
 
@@ -83,7 +94,7 @@ class CryptoController extends Controller
         ]);
     }
 
-    public function changeValues()
+    public function changeValues(): JsonResponse
     {
         $selectedAccount = request()->input('account');
         $cryptoId = request()->input('id');
@@ -91,7 +102,7 @@ class CryptoController extends Controller
         $selectedAccount = auth()->user()->accounts()->where('number', $selectedAccount)->first();
 
         $selectedCurrency = $selectedAccount->currency;
-        $userCrypto = $selectedAccount->userCryptos()->where('cmc_id', $cryptoId)->first() ?? null;
+        $userCrypto = $selectedAccount->cryptos()->where('cmc_id', $cryptoId)->first() ?? null;
 
         $crypto = $this->cryptoRepository->findById($cryptoId, $selectedCurrency ?? 'EUR');
 

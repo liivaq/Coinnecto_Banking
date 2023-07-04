@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 use PragmaRX\Google2FA\Google2FA;
@@ -56,7 +57,7 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+        return Redirect::route('dashboard')->with('success', 'Registration successful!');
     }
 
     private function generateAccountNumber(string $currency = 'EUR', int $length = 21): string

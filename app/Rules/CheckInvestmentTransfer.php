@@ -8,22 +8,21 @@ use Illuminate\Contracts\Validation\Rule;
 class CheckInvestmentTransfer implements Rule
 {
 
-    private Account $accountTo;
+    private ?Account $accountTo;
 
-    public function __construct(string $accountTo)
+    public function __construct(?string $accountTo)
     {
-        $this->accountTo = Account::where('number', $accountTo)->first();
+        $this->accountTo = Account::where('number', $accountTo)->first() ?? null;
     }
 
     public function passes($attribute, $value)
     {
         $accountFrom = Account::where('number', $value)->first();
 
-        if($accountFrom->type === 'investment'){
-            return $accountFrom->user_id === $this->accountTo->user_id;
+        if (!$this->accountTo || $accountFrom->type !== 'investment') {
+            return true;
         }
-
-        return true;
+        return $accountFrom->user_id === $this->accountTo->user_id;
     }
 
 

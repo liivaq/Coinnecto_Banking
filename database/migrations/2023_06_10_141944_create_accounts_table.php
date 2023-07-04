@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('number')->unique();
             $table->string('currency');
-            $table->float('balance')->default(0.00);
+            $table->float('balance')->default(100.00);
             $table->string('name');
             $table->timestamps();
         });

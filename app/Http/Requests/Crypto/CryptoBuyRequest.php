@@ -3,8 +3,7 @@
 namespace App\Http\Requests\Crypto;
 
 use App\Models\Account;
-use App\Rules\MaxCryptoPrice;
-use App\Rules\Otp;
+use App\Rules\OneTimePassword;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CryptoBuyRequest extends FormRequest
@@ -15,7 +14,6 @@ class CryptoBuyRequest extends FormRequest
         return true;
     }
 
-
     public function rules()
     {
         /** @var Account $account */
@@ -24,8 +22,7 @@ class CryptoBuyRequest extends FormRequest
        return [
             'account' => ['required', 'exists:accounts,number'],
             'amount' => ['required', 'numeric', 'min:0.01'],
-            'price' => [new MaxCryptoPrice($this->input('amount'), $account->balance)],
-            /*'one_time_password' => ['required', new Otp()]*/
+            //'one_time_password' => ['required', new OneTimePassword()]
         ];
     }
 }

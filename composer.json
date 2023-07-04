@@ -9,8 +9,10 @@
         "ext-simplexml": "*",
         "bacon/bacon-qr-code": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
+        "itsgoingd/clockwork": "^5.1",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
+        "laravel/scout": "^10.2",
         "laravel/tinker": "^2.7",
         "pragmarx/google2fa-laravel": "^2.1"
     },

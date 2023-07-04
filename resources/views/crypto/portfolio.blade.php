@@ -6,6 +6,9 @@
     @if ($message = Session::get('success'))
         <x-flash class="bg-green-200">{{$message}}</x-flash>
     @endif
+    @if ($errors->has('error'))
+        <x-flash class="bg-red-200">{{$errors->first('error')}}</x-flash>
+    @endif
 
     @if(!$cryptoInfo)
         <div class="mt-4 mb-6 bg-white p-5 rounded-xl">
@@ -52,7 +55,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 ">
             @foreach($accounts as $account)
-                @foreach($account->userCryptos as $crypto)
+                @foreach($account->cryptos as $crypto)
                     @php($info = $cryptoInfo[$crypto->cmc_id])
                     <div class="relative bg-white p-4 rounded-xl flex flex-col ">
                         <img src="{{$info->iconUrl}}" alt="{{$info->symbol}}"

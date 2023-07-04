@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Account extends Model
 {
     use HasFactory, SoftDeletes;
@@ -22,10 +21,10 @@ class Account extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class, 'account_from_id')
-            ->orWhere('account_to_id', $this->getKey());
+            ->orWhere('account_to_id', $this->id);
     }
 
-    public function userCryptos(): HasMany
+    public function cryptos(): HasMany
     {
         return $this->hasMany(UserCrypto::class, 'account_id');
     }

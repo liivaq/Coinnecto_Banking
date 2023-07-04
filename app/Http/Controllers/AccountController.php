@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\FailedToGetResponseFromCurrencyApiException;
 use App\Http\Requests\CreateAccountRequest;
 use App\Http\Requests\DeleteAccountRequest;
 use App\Models\Account;
@@ -21,7 +22,7 @@ class AccountController extends Controller
 
     public function index()
     {
-        $accounts = auth()->user()->accounts()->get();
+        $accounts = auth()->user()->accounts()->orderBy('type', 'asc')->get();
         return view('accounts.index', [
             'accounts' => $accounts
         ]);
@@ -29,16 +30,16 @@ class AccountController extends Controller
 
     public function create()
     {
-        $currencies = Cache::get('currencies');
-
-        if (!$currencies) {
+        try {
             $currencies = $this->currencyRepository->all();
-            Cache::put('currencies', $currencies, now()->addHours(5));
-        }
+            return view('accounts.create', [
+                'currencies' => $currencies
+            ]);
 
-        return view('accounts.create', [
-            'currencies' => $currencies
-        ]);
+        } catch (FailedToGetResponseFromCurrencyApiException) {
+            return redirect()->back()->withErrors(
+                ['error' => 'Sorry, there was a problem retreiving data, try again later']);
+        }
     }
 
     public function store(CreateAccountRequest $request)

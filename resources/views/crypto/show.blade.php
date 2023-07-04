@@ -5,6 +5,10 @@
         </x-slot>
     </x-slot>
 
+    @if ($errors->has('error'))
+        <x-flash class="bg-red-200">{{ $errors->first('error') }}</x-flash>
+    @endif
+
     <div id="result" class="pb-4">
         <div class="bg-white shadow sm:rounded-lg">
             <div class="flex items-center p-4 sm:p-8">
@@ -18,7 +22,7 @@
 
                 <div class="flex-1">
                     <p class="font-bold">You Own:</p>
-                    <p class="user-crypto-amount">{{$userCrypto->amount ?? 0}}</p>
+                    <p class="user-crypto-amount">{{$accounts->first()->cryptos->first()->amount ?? 0}}</p>
                 </div>
 
                 <div class="flex-1">
@@ -47,7 +51,7 @@
         </div>
     </div>
 
-    <div x-data="{ selectedOption: '', cryptoId: '', price: {{$crypto->price}} }" x-init="cryptoId = '{{ $crypto->id }}'"  class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+    <div x-data="{ selectedOption: {{$accounts->first()}}, cryptoId: '', price: {{$crypto->price}} }" x-init="cryptoId = '{{ $crypto->id }}'"  class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
         <div class="max-w-xl">
             @if(count($accounts) === 0)
                 <div class="flex-col">
@@ -98,6 +102,9 @@
                         @error('price')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
+                        @error('insufficient_balance')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
 
                         <div class="mt-6">
                             <p class="text-s text-gray-700">Total price: <span class="total-price" x-text="amount * price"></span>
@@ -123,12 +130,11 @@
                         @enderror
                     </div>
 
-                    <div x-cloak x-data="{ hasCryptos: true }" x-init="hasCryptos = {{ isset($userCrypto->amount) && $userCrypto->amount > 0  ? 'true' : 'false' }}">
-                        <x-primary-button name="type" value="buy">Buy</x-primary-button>
-                        <x-primary-button x-bind:disabled="!hasCryptos"
-                                          x-bind:class="{ 'opacity-50 cursor-not-allowed': !hasCryptos }"
-                                          name="type" value="sell" formaction="{{ route('crypto.sell') }} "
-                        >
+                    <div>
+                        <x-primary-button name="type" value="buy">
+                            Buy
+                        </x-primary-button>
+                        <x-primary-button name="type" value="sell" formaction="{{ route('crypto.sell') }}">
                             Sell
                         </x-primary-button>
                         <a href="{{ route('crypto.index') }}">
@@ -182,5 +188,6 @@
                     });
             }
         }
+
     </script>
 </x-app-layout>

@@ -3,9 +3,13 @@
             Dashboard
     </x-slot>
 
+    @if ($message = Session::get('success'))
+        <x-flash class="bg-green-200">{{$message}}</x-flash>
+    @endif
+
     <div class="mt-4 mb-6 bg-white p-5 rounded-xl">
         <div>
-            <h2 class="text-4xl font-bold">Welcome back, {{strtok(auth()->user()->name, " ")}}!
+            <h2 class="text-4xl font-bold">Welcome, {{auth()->user()->name}}!
                 <span class="ml-4 absolute animate-waving-hand">👋</span></h2>
             <p class="text-md text-gray-600 mt-4">Explore your banking activities and manage your finances
                 efficiently.</p>
@@ -32,7 +36,7 @@
                         <h2 class="font-bold mb-4">Accounts</h2>
                     </div>
                 </div>
-                <div class="flex-grow m-6">
+                <div class="flex-grow m-8">
                     <ul class="">
                         <li class="text-2xl font-semibold">{{$account->name}}</li>
                         <li class="text-xl text-gray-600">{{$account->number}}</li>
@@ -91,16 +95,16 @@
                         </thead>
                         <tbody>
                         @foreach ($transactions as $transaction)
-                            @if($transaction->accountFrom->id === $account->id || $transaction->accountTo->id === $account->id )
+                            @if($transaction->account_from_id === $account->id || $transaction->account_to_id === $account->id )
                                 <tr>
-                                    @if($transaction->accountTo->id === $account->id )
+                                    @if($transaction->account_to_id === $account->id )
                                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <p class="text-gray-900 whitespace-no-wrap">
                                                 From {{ $transaction->accountFrom->user->name}}</p>
                                             <span>{{ $transaction->accountFrom->number}}</span>
                                         </td>
                                     @endif
-                                    @if($transaction->accountTo->id !== $account->id )
+                                    @if($transaction->account_to_id !== $account->id )
                                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <p class="text-gray-900 whitespace-no-wrap">
                                                 To {{ $transaction->accountTo->user->name}}</p>
@@ -108,14 +112,14 @@
                                         </td>
                                     @endif
 
-                                    @if($transaction->accountTo->id === $account->id )
+                                    @if($transaction->account_to_id === $account->id )
                                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <p class="text-green-800 whitespace-no-wrap">
                                                 +{{number_format($transaction->amount_converted, 2)}} {{ $account->currency }}
                                             </p>
                                         </td>
                                     @endif
-                                    @if($transaction->accountFrom->id === $account->id )
+                                    @if($transaction->account_from_id === $account->id )
                                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <p class="text-red-800 whitespace-no-wrap">
                                                 -{{number_format($transaction->amount, 2)}} {{ $account->currency }}

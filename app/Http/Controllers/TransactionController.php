@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\FailedToGetResponseFromCurrencyApiException;
 use App\Http\Requests\TransferRequest;
 use App\Models\Account;
 use App\Models\Transaction;
@@ -10,7 +11,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redirect;
 
 class TransactionController extends Controller
@@ -46,7 +46,7 @@ class TransactionController extends Controller
                 $query->withTrashed();
             }])
             ->orderBy('created_at', 'desc')
-            ->paginate(3);
+            ->paginate(5);
 
         return view('transactions.show', [
             'account' => $account,
@@ -69,60 +69,34 @@ class TransactionController extends Controller
         $accountFrom = Account::where('number', $request->account_from)->firstOrFail();
         $accountTo = Account::where('number', $request->account_to)->firstOrFail();
 
-        $converted = $this->convert($accountFrom->currency, $accountTo->currency, (float)$request->amount);
+        try {
+            $converted = $this->convert($accountFrom->currency, $accountTo->currency, (float)$request->amount);
+        } catch (\Exception) {
+            return Redirect::back()->with('transactionError', 'There was a problem! Please, try again later.');
+        }
 
         $convertedAmount = $converted['convertedAmount'];
         $exchangeRate = $converted['exchangeRate'];
 
-        $accountFrom->withdraw((float) $request->amount);
+        $accountFrom->withdraw((float)$request->amount);
         $accountTo->deposit($convertedAmount);
 
         $this->saveTransaction(
             $accountFrom,
             $accountTo,
-            (float) $request->amount,
+            (float)$request->amount,
             $convertedAmount,
             $exchangeRate
         );
 
-        return Redirect::to(route('transactions.history', ['account' => $accountFrom->id]))->with('success', 'Transaction successful!');
+        return Redirect::to(route('transactions.history',
+            ['account' => $accountFrom->id]))->with('success', 'Transaction successful!');
 
     }
 
     public function filter(Request $request)
     {
-        $from = $request->from ?? now()->toDateString();
-        $to = $request->to ?? now()->toDateString();
-
-        $account = auth()->user()->accounts()->where('id', $request->account)->first();
-
-        $transactions = $account->transactions()->with(['accountTo', 'accountFrom'])
-            ->where(function ($query) use ($request) {
-                $searchTerm = '%' . $request->search . '%';
-
-                $query->where(function ($query) use ($searchTerm) {
-                    $query->whereHas('accountTo', function ($query) use ($searchTerm) {
-                        $query->where('number', 'like', $searchTerm);
-                    })->orWhereHas('accountFrom', function ($query) use ($searchTerm) {
-                        $query->where('number', 'like', $searchTerm);
-                    });
-                })->orWhereHas('accountFrom.user', function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', $searchTerm);
-                })->orWhereHas('accountTo.user', function ($query) use ($searchTerm) {
-                    $query->where('name', 'like', $searchTerm);
-                });
-            })
-            ->whereDate('created_at', '>=', $from)
-            ->whereDate('created_at', '<=', $to)
-            ->paginate(3);
-
-        return view('transactions.show', [
-            'search' => $request->search,
-            'from' => $from,
-            'to' => $to,
-            'account' => $account,
-            'transactions' => $transactions,
-        ]);
+        $accounts = auth()->user()->accounts();
     }
 
     private function saveTransaction(
@@ -146,18 +120,14 @@ class TransactionController extends Controller
 
     private function convert(string $from, string $to, float $amount): array
     {
-        $currencies = Cache::get('currencies');
-
-        if (!$currencies) {
+        try {
             $currencies = $this->currencyRepository->all();
-            Cache::put('currencies', $currencies, now()->addHours(5));
+        } catch (FailedToGetResponseFromCurrencyApiException $exception) {
+            throw new FailedToGetResponseFromCurrencyApiException();
         }
 
-        $fromCurrency = $currencies[$from];
-        $toCurrency = $currencies[$to];
-
-        $fromCurrencyRate = $fromCurrency->getRate();
-        $toCurrencyRate = $toCurrency->getRate();
+        $fromCurrencyRate = $currencies[$from]->getRate();
+        $toCurrencyRate = $currencies[$to]->getRate();
 
         $exchangeRate = $toCurrencyRate / $fromCurrencyRate;
 

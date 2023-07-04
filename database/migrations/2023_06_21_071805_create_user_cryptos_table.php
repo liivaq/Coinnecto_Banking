@@ -13,7 +13,6 @@ return new class extends Migration
             $table->id();
             $table->integer('cmc_id');
             $table->foreignId('account_id')->constrained();
-            $table->foreignId('user_id')->constrained();
             $table->float('amount');
             $table->timestamps();
         });
