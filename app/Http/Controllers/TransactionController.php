@@ -36,15 +36,8 @@ class TransactionController extends Controller
         /** @var Account $account */
         $account = auth()->user()->accounts()->where('id', $request->account)->first();
 
-        $transactions = Account::withTrashed()
-            ->find($account->id)
+        $transactions = $account
             ->transactions()
-            ->with(['accountTo' => function ($query) {
-                $query->withTrashed();
-            }])
-            ->with(['accountFrom' => function ($query) {
-                $query->withTrashed();
-            }])
             ->orderBy('created_at', 'desc')
             ->paginate(5);
 
@@ -75,17 +68,22 @@ class TransactionController extends Controller
             return Redirect::back()->with('transactionError', 'There was a problem! Please, try again later.');
         }
 
-        $convertedAmount = $converted['convertedAmount'];
+        $toDeposit = $converted['convertedAmount'];
         $exchangeRate = $converted['exchangeRate'];
 
+        if($accountFrom->type === 'investment'){
+           $toDeposit = $this->checkInvestedBalance($accountFrom, $toDeposit);
+        }
+
         $accountFrom->withdraw((float)$request->amount);
-        $accountTo->deposit($convertedAmount);
+        $accountTo->deposit($toDeposit);
+
 
         $this->saveTransaction(
             $accountFrom,
             $accountTo,
             (float)$request->amount,
-            $convertedAmount,
+            $toDeposit,
             $exchangeRate
         );
 
@@ -172,5 +170,18 @@ class TransactionController extends Controller
             'convertedAmount' => $exchangeRate * $amount,
             'exchangeRate' => $exchangeRate
         ];
+    }
+
+    private function checkInvestedBalance(Account $accountFrom, float $amount){
+
+        if($accountFrom->invested_amount < $amount && $accountFrom->invested_amount > 0 ){
+            return $amount - (($amount - $accountFrom->invested_amount) * 0.2);
+        }
+
+        if($accountFrom->invested_amount < $amount && $accountFrom->invested_amount < 0 ){
+            return $amount - ($amount * 0.2);
+        }
+
+        return $amount;
     }
 }

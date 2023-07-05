@@ -94,6 +94,22 @@
                     @endif
                 </span>
             </div>
+            @if ($paginator->hasPages())
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-sm text-gray-700">
+                        {{ __('Showing') }} <span class="font-medium">{{ $paginator->firstItem() }}</span>
+                        {{ __('to') }} <span class="font-medium">{{ $paginator->lastItem() }}</span>
+                        {{ __('of') }} <span class="font-medium">{{ $paginator->total() }}</span>
+                        {{ __('results') }}
+                    </div>
+
+                    <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}" class="flex items-center justify-center">
+                        <!-- Pagination links -->
+                        <!-- ... Your existing pagination links code ... -->
+                    </nav>
+                </div>
+            @endif
         </div>
     </nav>
+
 @endif

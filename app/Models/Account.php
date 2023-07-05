@@ -37,12 +37,23 @@ class Account extends Model
     public function deposit(float $amount): void
     {
         $this->balance += $amount;
+
+        if($this->type === 'investment'){
+            $this->invested_amount += $amount;
+        }
+
         $this->save();
     }
 
     public function withdraw(float $amount): void
     {
         $this->balance -= $amount;
+
+        if($this->type === 'investment'){
+            $this->invested_amount -= $amount;
+        }
+
         $this->save();
     }
+
 }

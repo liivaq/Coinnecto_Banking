@@ -14,7 +14,6 @@ class MaxCryptoSellAmount implements Rule
         $this->amount = (float) $amount;
     }
 
-
     public function passes($attribute, $value)
     {
         return $value <= $this->amount ;

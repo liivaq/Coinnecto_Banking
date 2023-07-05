@@ -57,9 +57,9 @@ class CryptoTransactionController extends Controller
         $crypto = $this->cryptoRepository->findById($request->crypto_coin, $account->currency);
         $toWithdraw = $crypto->price * $request->amount;
 
-        if ($toWithdraw > $account->balance) {
+        /*if ($toWithdraw > $account->balance) {
             return redirect()->back()->withErrors(['insufficient_balance' => 'Insufficient balance.']);
-        }
+        }*/
 
         $request->validated();
 

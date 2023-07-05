@@ -48,7 +48,7 @@ class CryptoController extends Controller
                 }])
                 ->get();
 
-            $crypto = $this->cryptoRepository->findById($id);
+            $crypto = $this->cryptoRepository->findById($id, $accounts->first()->currency ?? 'EUR');
 
             return view('crypto.show', [
                 'crypto' => $crypto,
@@ -70,7 +70,9 @@ class CryptoController extends Controller
                 'cryptoCollection' => [$crypto]
             ]);
         } catch (CryptoCoinNotFoundException $exception) {
-            return Redirect::back()->withErrors(['error' => 'Nothing was found. Provide a valid symbol']);
+            return Redirect::back()->withErrors([
+                'error' => 'Nothing was found. Provide a valid symbol',
+            ]);
         }
     }
 

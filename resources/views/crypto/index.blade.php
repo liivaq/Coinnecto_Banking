@@ -16,6 +16,7 @@
                     name="search"
                     type="text"
                     placeholder="Search by symbol"
+                    value="{{$search ?? ''}}"
                 ></x-text-input>
                 <x-primary-button
                     type="submit"

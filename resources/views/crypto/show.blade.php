@@ -22,11 +22,11 @@
 
                 <div class="flex-1">
                     <p class="font-bold">You Own:</p>
-                    <p class="user-crypto-amount">{{$accounts->first()->cryptos->first()->amount ?? 0}}</p>
+                    <p class="user-crypto-amount">{{$accounts->first() ? $accounts->first()->cryptos->first()->amount ?? 0 : 0}}</p>
                 </div>
 
                 <div class="flex-1">
-                    <p class="font-bold">Price  <span class="currency">EUR</span></p>
+                    <p class="font-bold">Price  <span class="currency">{{$accounts->first() ? $accounts->first()->currency : 'EUR'}}</span></p>
                     <p class="crypto-price">{{$crypto->price}}</p>
                 </div>
                 <div class="flex-1">
@@ -108,7 +108,7 @@
 
                         <div class="mt-6">
                             <p class="text-s text-gray-700">Total price: <span class="total-price" x-text="amount * price"></span>
-                                <span class="currency">EUR</span></p>
+                                <span class="currency">{{$accounts->first()->currency}}</span></p>
                         </div>
                     </div>
 

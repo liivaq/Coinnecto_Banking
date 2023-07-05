@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('number')->unique();
             $table->string('currency');
             $table->float('balance')->default(100.00);
+            $table->float('invested_amount')->default(0.00);
             $table->string('name');
             $table->timestamps();
         });
