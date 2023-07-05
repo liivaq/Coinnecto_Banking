@@ -1,3 +1,4 @@
+![coinnecto_logo](https://github.com/liivaq/Coinnecto_Banking/assets/123387229/0ec52848-589e-4641-8321-e44687a31582)
 
 ## Description
 
@@ -13,7 +14,6 @@ It's included features are:
 * ability to open investment accounts;
 * browse Crypto currency market;
 * purchase or sell Crypto currency, using investment accounts;
-
 
 ## Requirements
 
