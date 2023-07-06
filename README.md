@@ -46,5 +46,30 @@ It's included features are:
 
 ## Preview
 
+1. Register as a new user:
+   ![register](https://github.com/liivaq/Coinnecto_Banking/assets/123387229/53fb70c4-a89e-45b2-ae7d-e2b988c72b79)
+
+2. Acquire your secret key, for making safe transactions with an authenticator app:
+   ![user_secret](https://github.com/liivaq/Coinnecto_Banking/assets/123387229/f31e0347-9157-4286-b8d8-221f9396cf57)
+
+3. Open accounts (checking or investment) in different currencies:
+   ![open_account](https://github.com/liivaq/Coinnecto_Banking/assets/123387229/d02a8d10-8897-4f37-9d9d-c181373ab759)
+
+4. Make transactions:   
+   ![transaction](https://github.com/liivaq/Coinnecto_Banking/assets/123387229/f6d80e31-0ae4-4a90-89ec-32f764496db0)
+
+5. Explore crypto market:
+   ![crypto_market](https://github.com/liivaq/Coinnecto_Banking/assets/123387229/05de2b28-b531-4256-8e71-89c32168b8d1)
+
+6. Buy/sell cryptos:
+   
+   ![crypto_buy](https://github.com/liivaq/Coinnecto_Banking/assets/123387229/b85628f9-487e-4186-a1ce-bbdf277e6549)
+
+
+
+
+
+
+
 
 
