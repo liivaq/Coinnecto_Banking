@@ -54,7 +54,7 @@ class CryptoController extends Controller
                 'crypto' => $crypto,
                 'accounts' => $accounts,
             ]);
-        }catch (CryptoCoinNotFoundException){
+        } catch (CryptoCoinNotFoundException) {
             return redirect()->back()->withErrors(['error' => 'Sorry! Failed to retrieve information, try again later.']);
         }
     }

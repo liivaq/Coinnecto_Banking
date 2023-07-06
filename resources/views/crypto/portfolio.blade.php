@@ -10,7 +10,16 @@
         <x-flash class="bg-red-200">{{$errors->first('error')}}</x-flash>
     @endif
 
-    @if(!$cryptoInfo)
+    @php
+            $cryptoCount = 0;
+         foreach($accounts as $account){
+            foreach($account->cryptos as $crypto){
+                $cryptoCount += $crypto->amount;
+            }
+         }
+    @endphp
+
+    @if($cryptoCount === 0)
         <div class="mt-4 mb-6 bg-white p-5 rounded-xl">
             <div>
                 <h1 class="text-2xl font-bold">You have no Cryptos!</h1>

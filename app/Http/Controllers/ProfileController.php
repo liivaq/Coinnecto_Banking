@@ -46,7 +46,6 @@ class ProfileController extends Controller
         );
 
         return view('profile.edit', [
-            'name' => 'QR',
             'image' => $QR_Image,
             'user' => $request->user(),
         ]);

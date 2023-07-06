@@ -36,6 +36,7 @@ class CryptoTransactionController extends Controller
 
     public function show(Request $request): Factory|View|Application
     {
+        /** @var Account $account */
         $account = auth()->user()->accounts()->where('id', $request->account)->first();
 
         $transactions = $account
@@ -52,14 +53,10 @@ class CryptoTransactionController extends Controller
     public function buy(CryptoBuyRequest $request): RedirectResponse
     {
         /** @var Account $account */
-
         $account = Account::where('number', $request->account)->firstOrFail();
+
         $crypto = $this->cryptoRepository->findById($request->crypto_coin, $account->currency);
         $toWithdraw = $crypto->price * $request->amount;
-
-        /*if ($toWithdraw > $account->balance) {
-            return redirect()->back()->withErrors(['insufficient_balance' => 'Insufficient balance.']);
-        }*/
 
         $request->validated();
 
@@ -111,6 +108,7 @@ class CryptoTransactionController extends Controller
 
     public function saveUserCrypto(CryptoCoin $coin, Request $request, Account $account): void
     {
+        /** @var Account $account */
         $account = auth()->user()->accounts()->where('id', $account->id)->first();
 
         $crypto = $account->cryptos()->firstOrNew([

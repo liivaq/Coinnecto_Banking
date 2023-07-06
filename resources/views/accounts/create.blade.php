@@ -13,7 +13,7 @@
                 <p class="mt-1 text-sm text-gray-600">
                     Select your new account's name, type and currency
                 </p>
-                <form method="post" action="{{ route('accounts.store') }}" class="mt-6 space-y-6">
+                <form method="post" action="{{ route('accounts.store') }}" class="mt-6 space-y-6" autocomplete="off">
                     @csrf
 
                     <div>

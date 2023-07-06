@@ -3,8 +3,7 @@
             Dashboard
     </x-slot>
 
-    @if ($message = Session::get('success'))
-        {{--<x-flash class="bg-green-200">{{$message}}</x-flash>--}}
+    @if (Session::get('success'))
         <x-register-modal>
             <div class="mt-4 mb-6 bg-white p-5 rounded-xl">
                 <div>
@@ -15,23 +14,23 @@
                     </p>
 
                     <p class="text-md text-gray-600 mt-4">
-                        <span class="font-bold">↠ </span> Head to your <a href="{{route('profile.edit')}}" class="font-semibold text-decoration-line: underline">
+                        <span class="font-bold">🔐 </span> Head to your <a href="{{route('profile.edit')}}" class="font-semibold text-decoration-line: underline">
                             Profile page</a> to acquire your <span class="font-semibold">security key</span> -
                         you will need it to make secure transactions
                     </p>
 
                     <p class="text-md text-gray-600 mt-4">
-                        <span class="font-bold">↠ </span>Explore all of your accounts and add new Checking or Investment accounts in the <a href="{{route('accounts.index')}}" class="font-semibold text-decoration-line: underline">
+                        <span class="font-bold">💵 </span>Explore all of your accounts and add new Checking or Investment accounts in the <a href="{{route('accounts.index')}}" class="font-semibold text-decoration-line: underline">
                             Accounts page</a>
                     </p>
 
                     <p class="text-md text-gray-600 mt-4">
-                        <span class="font-bold">↠ </span>Make transactions in the <a href="{{route('transactions.create')}}" class="font-semibold text-decoration-line: underline">
+                        <span class="font-bold">💱 </span>Make transactions in the <a href="{{route('transactions.create')}}" class="font-semibold text-decoration-line: underline">
                             Transactions page</a>
                     </p>
 
                     <p class="text-md text-gray-600 mt-4">
-                        <span class="font-bold">↠ </span>Explore the latest Crypto trends in <a href="{{route('crypto.index')}}" class="font-semibold text-decoration-line: underline">
+                        <span class="font-bold">🪙 </span>Explore the latest Crypto trends in <a href="{{route('crypto.index')}}" class="font-semibold text-decoration-line: underline">
                             Crypto Market page</a>
                     </p>
                 </div>

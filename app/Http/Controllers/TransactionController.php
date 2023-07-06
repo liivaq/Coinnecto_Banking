@@ -62,29 +62,31 @@ class TransactionController extends Controller
         $accountFrom = Account::where('number', $request->account_from)->firstOrFail();
         $accountTo = Account::where('number', $request->account_to)->firstOrFail();
 
-        try {
-            $converted = $this->convert($accountFrom->currency, $accountTo->currency, (float)$request->amount);
-        } catch (\Exception) {
-            return Redirect::back()->with('transactionError', 'There was a problem! Please, try again later.');
+        if ($accountFrom->currency !== $accountTo->currency) {
+            try {
+                $converted = $this->convert($accountFrom->currency, $accountTo->currency, (float)$request->amount);
+                $toDeposit = $converted['convertedAmount'];
+                $exchangeRate = $converted['exchangeRate'];
+            } catch (\Exception) {
+                return Redirect::back()->with('transactionError',
+                    'There was a problem with currency conversion! Please, try again later.');
+            }
         }
 
-        $toDeposit = $converted['convertedAmount'];
-        $exchangeRate = $converted['exchangeRate'];
-
-        if($accountFrom->type === 'investment'){
-           $toDeposit = $this->checkInvestedBalance($accountFrom, $toDeposit);
+        if ($accountFrom->type === 'investment') {
+            $toDeposit = $this->checkInvestedBalance($accountFrom, $toDeposit ?? (float)$request->amount);
         }
 
         $accountFrom->withdraw((float)$request->amount);
-        $accountTo->deposit($toDeposit);
+        $accountTo->deposit($toDeposit ?? (float)$request->amount);
 
 
         $this->saveTransaction(
             $accountFrom,
             $accountTo,
             (float)$request->amount,
-            $toDeposit,
-            $exchangeRate
+            $toDeposit ?? (float)$request->amount,
+            $exchangeRate ?? 1
         );
 
         return Redirect::to(route('transactions.history',
@@ -172,13 +174,14 @@ class TransactionController extends Controller
         ];
     }
 
-    private function checkInvestedBalance(Account $accountFrom, float $amount){
+    private function checkInvestedBalance(Account $accountFrom, float $amount)
+    {
 
-        if($accountFrom->invested_amount < $amount && $accountFrom->invested_amount > 0 ){
+        if ($accountFrom->invested_amount < $amount && $accountFrom->invested_amount > 0) {
             return $amount - (($amount - $accountFrom->invested_amount) * 0.2);
         }
 
-        if($accountFrom->invested_amount < $amount && $accountFrom->invested_amount < 0 ){
+        if ($accountFrom->invested_amount < $amount && $accountFrom->invested_amount < 0) {
             return $amount - ($amount * 0.2);
         }
 

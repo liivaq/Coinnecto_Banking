@@ -7,6 +7,10 @@ use App\Http\Requests\CreateAccountRequest;
 use App\Http\Requests\DeleteAccountRequest;
 use App\Models\Account;
 use App\Repositories\CurrencyRepository;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -19,7 +23,7 @@ class AccountController extends Controller
         $this->currencyRepository = $currencyRepository;
     }
 
-    public function index()
+    public function index(): Factory|View|Application
     {
         $accounts = auth()->user()->accounts()->orderBy('type', 'asc')->get();
         return view('accounts.index', [
@@ -27,7 +31,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function create()
+    public function create(): Factory|View|Application|RedirectResponse
     {
         try {
             $currencies = $this->currencyRepository->all();
@@ -41,7 +45,7 @@ class AccountController extends Controller
         }
     }
 
-    public function store(CreateAccountRequest $request)
+    public function store(CreateAccountRequest $request): RedirectResponse
     {
         $request->validated();
 
@@ -57,7 +61,7 @@ class AccountController extends Controller
 
     }
 
-    public function destroy(DeleteAccountRequest $request)
+    public function destroy(DeleteAccountRequest $request): RedirectResponse
     {
         $request->validated();
 

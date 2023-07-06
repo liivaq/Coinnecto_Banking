@@ -24,7 +24,7 @@ class CryptoSellRequest extends FormRequest
         return [
             'account' => ['required', 'exists:accounts,number'],
             'amount' => ['required', 'numeric', 'min:0.01', new MaxCryptoSellAmount($amount)],
-            //'one_time_password' => ['required', new OneTimePassword()]
+            'one_time_password' => ['required', new OneTimePassword()]
         ];
     }
 }

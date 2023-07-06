@@ -17,6 +17,10 @@
                 <div class="mb-4 text-sm">{{$account->number}}</div>
                 <div class="mb-4 text-xl">Total
                     balance: {{ number_format($account->balance, 2) }} {{$account->currency}}</div>
+                @if($account->type === 'investment')
+                    <div class="mb-4 text-xl">Invested Amount:
+                       {{number_format($account->invested_amount,2)}} {{$account->currency}}</div>
+                @endif
             </div>
             <div class="flex mt-8">
                 <form class="items-center" method="get" action="{{route('transactions.filter')}}">

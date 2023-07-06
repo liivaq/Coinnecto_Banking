@@ -1,6 +1,6 @@
 @props([
     'name',
-    'show' => false,
+    'show' => true,
     'maxWidth' => '2xl'
 ])
 
@@ -31,7 +31,7 @@
         nextFocusableIndex() { return (this.focusables().indexOf(document.activeElement) + 1) % (this.focusables().length + 1) },
         prevFocusableIndex() { return Math.max(0, this.focusables().indexOf(document.activeElement)) -1 },
         close() {
-            show = false;
+            this.show = false;
             document.body.classList.remove('overflow-y-hidden');
         }
     }"

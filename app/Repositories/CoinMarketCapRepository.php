@@ -107,8 +107,9 @@ class CoinMarketCapRepository
             }
 
             return $this->buildModel($coin->{strtoupper($symbol)});
+
         } catch (GuzzleException $exception) {
-            throw new Exception;
+            throw new CryptoCoinNotFoundException();
         }
     }
 

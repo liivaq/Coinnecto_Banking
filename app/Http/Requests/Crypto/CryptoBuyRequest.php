@@ -16,13 +16,10 @@ class CryptoBuyRequest extends FormRequest
 
     public function rules()
     {
-        /** @var Account $account */
-        $account = auth()->user()->accounts()->where('number', $this->input('account'))->first();
-
        return [
             'account' => ['required', 'exists:accounts,number'],
             'amount' => ['required', 'numeric', 'min:0.01'],
-            //'one_time_password' => ['required', new OneTimePassword()]
+            'one_time_password' => ['required', new OneTimePassword()]
         ];
     }
 }
