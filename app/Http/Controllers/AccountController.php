@@ -54,7 +54,8 @@ class AccountController extends Controller
             'name' => $request->name,
             'currency' => $request->currency,
             'number' => $this->generateAccountNumber($request->currency),
-            'type' => $request->type
+            'type' => $request->type,
+            'balance' => $request->type === 'investment' ? 0 : 100
         ]);
 
         return Redirect::to('/accounts')->with('success', 'Account created Successfully!');

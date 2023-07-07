@@ -38,7 +38,7 @@ class TransactionController extends Controller
 
         $transactions = $account
             ->transactions()
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->paginate(5);
 
         return view('transactions.show', [
@@ -124,7 +124,7 @@ class TransactionController extends Controller
                         $query->where('number', 'like', '%' . $searchTerm . '%');
                     });
             })
-            ->orderBy('created_at', 'desc')
+            ->latest()
             ->paginate(3);
 
         return view('transactions.show', [

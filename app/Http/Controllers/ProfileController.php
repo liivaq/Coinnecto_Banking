@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Models\Account;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,8 +15,7 @@ class ProfileController extends Controller
     {
         $account = auth()->user()->accounts()->first();
 
-        $transactions = Account::withTrashed()
-            ->find($account->id)
+        $transactions = $account
             ->transactions()
             ->with(['accountTo' => function ($query) {
                 $query->withTrashed();

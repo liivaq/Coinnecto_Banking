@@ -56,7 +56,7 @@
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 id="search" name="search" type="text" placeholder="Search transaction"
-                                value="{{ $search ?? null }}">
+                                value="{{ $search ?? old('search') ?? null }}">
                         </div>
                         <div class="px-3 pt-7">
                             <label>
@@ -150,7 +150,7 @@
                                 <p class="text-gray-900 whitespace-no-wrap">{{$transaction->currency_to}}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <p class="text-gray-900 whitespace-no-wrap">{{number_format($transaction->exchange_rate, 2)}}</p>
+                                <p class="text-gray-900 whitespace-no-wrap">{{number_format($transaction->exchange_rate, 4)}}</p>
                             </td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                 <p class="text-gray-900 whitespace-no-wrap">{{ $transaction->created_at->format('d/m/Y H:i') }}</p>

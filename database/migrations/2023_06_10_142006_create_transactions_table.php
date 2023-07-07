@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('currency_to');
             $table->float('amount');
             $table->float('amount_converted');
-            $table->float('exchange_rate');
+            $table->decimal('exchange_rate', 6);
             $table->timestamps();
         });
     }

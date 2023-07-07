@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Crypto;
 
 use App\Models\Account;
+use App\Models\User;
 use App\Rules\MaxCryptoSellAmount;
 use App\Rules\OneTimePassword;
 use Illuminate\Foundation\Http\FormRequest;

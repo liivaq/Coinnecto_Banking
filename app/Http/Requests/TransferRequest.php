@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use App\Rules\ActiveAccount;
 use App\Rules\CheckInvestmentTransfer;
 use App\Rules\OneTimePassword;
@@ -21,7 +22,7 @@ class TransferRequest extends FormRequest
             'account_to' => ['required', 'exists:accounts,number', 'different:account_from', new ActiveAccount()],
             'account_from' => ['required', new CheckInvestmentTransfer($this->input('account_to'))],
             'amount' => ['required', 'numeric', 'min:0.01'],
-            /*'one_time_password' => ['required', new OneTimePassword()]*/
+            'one_time_password' => ['required', new OneTimePassword()]
         ];
     }
 }
